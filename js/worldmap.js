@@ -515,4 +515,38 @@ class WorldMap {
             .style("transform", "none")
             .style("z-index", "100");
     }
+
+    // Add a render method to handle window resizing
+    render() {
+        const vis = this;
+        
+        // Update width and height based on window size
+        vis.width = vis.container.clientWidth - vis.margin.left - vis.margin.right;
+        vis.height = vis.container.clientHeight - vis.margin.top - vis.margin.bottom;
+        
+        // Update SVG dimensions
+        d3.select("#" + vis.containerId)
+            .select("svg")
+            .attr("width", vis.width + vis.margin.left + vis.margin.right)
+            .attr("height", vis.height + vis.margin.top + vis.margin.bottom);
+        
+        // Update projection
+        vis.projection
+            .translate([vis.width / 2, vis.height / 2])
+            .scale(Math.min(vis.width, vis.height) * 0.4);
+        
+        // Update path generator
+        vis.path = d3.geoPath().projection(vis.projection);
+        
+        // Update all paths
+        if (vis.globeGroup) {
+            vis.globeGroup.selectAll("path")
+                .attr("d", vis.path);
+        }
+        
+        // Update legend position if it exists
+        if (vis.legend) {
+            vis.legend.attr('transform', `translate(${vis.width / 2 - 100}, ${vis.height - 30})`);
+        }
+    }
 }
