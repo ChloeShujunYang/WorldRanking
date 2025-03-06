@@ -12,12 +12,49 @@ let promises = [
 
 Promise.all(promises)
     .then(function (data) {
-        console.log("Raw data loaded:", data);
-        createVis(data)
+        let rankingData = data[0];
+
+        // Log the entire data set to check for 2024 entries
+        console.log("Loaded ranking data:", rankingData);
+
+        rankingData = rankingData.map(d => ({
+            rank_order: +d.rank_order || 0,
+            name: d.name,
+            location: d.location,
+            year: +d.year || 0,
+            scores_overall: +d.scores_overall || 0,
+            scores_teaching: +d.scores_teaching || 0,
+            scores_international_outlook: +d.scores_international_outlook || 0,
+            scores_industry_income: +d.scores_industry_income || 0,
+            scores_research: +d.scores_research || 0,
+            scores_citations: +d.scores_citations || 0
+        }));
+
+        // Log the filtered data for 2024
+        const universities2024 = rankingData.filter(d => d.year === 2024);
+        console.log("Filtered universities for 2024:", universities2024);
+
+        // Check specifically for Canada
+        const universitiesCanada = universities2024.filter(d => d.location === "Canada");
+        console.log("Universities in Canada for 2024:", universitiesCanada);
+
+        worldMap = new WorldMap("worldmap-chart", rankingData);
+        barChart = new BarChart("bar-chart-canvas", rankingData);
+        radarChart = new RadarChart("radar-chart-canvas", rankingData);
+
+        document.addEventListener("universitySelected", (event) => {
+            console.log('Main: University selected:', event.detail); // Log the selected university data
+            if (event.detail && event.detail.scores_overall > 0) {
+                radarChart.updateChart(event.detail);
+            } else {
+                console.warn('Main: No valid university data provided for radar chart update.');
+            }
+        });
+
+        barChart.updateChart();
+        radarChart.updateChart();
     })
-    .catch(function (err) {
-        console.error("Error loading data:", err)
-    });
+    .catch(err => console.error("Error loading data:", err));
 
 function createVis(data) {
     let rankingData = data[0];
@@ -58,14 +95,7 @@ function createVis(data) {
             stats_student_staff_ratio: +d.stats_student_staff_ratio || 0,
             stats_female_male_ratio: +d.stats_female_male_ratio || 0
         };
-    }).filter(d => {
-        // Filter out entries with invalid essential data
-        return d.year > 0 && 
-               !isNaN(d.rank) && 
-               !isNaN(d.scores_overall) &&
-               d.name && 
-               d.location;
-    });
+    }).filter(d => d.rank_order > 0);
 
     // Debug log after processing
     console.log("After processing:", rankingData);
@@ -175,6 +205,15 @@ function setupIntersectionObserver() {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 console.log("16. Page intersecting:", entry.target.id);
+                
+                // Add class to page container when page 4 is active
+                const pageContainer = document.querySelector('.page-container');
+                if (entry.target.id === 'page4') {
+                    pageContainer.classList.add('page4-active');
+                } else {
+                    pageContainer.classList.remove('page4-active');
+                }
+                
                 if (entry.target.id === 'page6' && scatterplot) {
                     console.log("17. Triggering scatterplot render");
                     scatterplot.render();

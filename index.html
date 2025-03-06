@@ -36,12 +36,40 @@
             </div>
         </section>
 
-        <!-- Page 4: World Map -->
+        <!-- Page 4: World Map
         <section class="page" id="page4">
             <div class="content-wrapper">
+                <h1 class="main-title">Global University Rankings</h1>
                 <div id="worldmap-chart"></div>
+                <div id="worldmap-tooltip" class="tooltip"></div>
+                <div id="worldmap-legend"></div>
+            </div>
+        </section> -->
+
+        <!-- Page 4: World Map with Radar and Bar Chart -->
+        <section class="page" id="page4">
+            <div class="content-wrapper">
+                <h1 class="main-title">Global University Rankings</h1>
+                <div class="map-charts-grid">
+                    <!-- Left: World Map -->
+                    <div id="worldmap-chart" class="page4-left"></div>
+                    <div id="worldmap-tooltip" class="tooltip"></div>
+                    <div id="worldmap-legend"></div>
+
+                    <!-- Right: Radar Chart (Top) and Bar Chart (Bottom) -->
+                    <div class="right-charts">
+                        <div id="radar-chart-container">
+                            <canvas id="radar-chart-canvas"></canvas>
+                        </div>
+                        <div id="bar-chart-container">
+                            <select id="rank-range-filter"></select>
+                            <canvas id="bar-chart-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
+
 
         <!-- Page 5: Timeline -->
         <section class="page" id="page5">
@@ -79,9 +107,15 @@
     </div>
 
     <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://d3js.org/d3-geo.v2.min.js"></script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+    <script src="https://unpkg.com/topojson-client@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/worldmap.js"></script>
     <script src="js/timeline.js"></script>
     <script src="js/scatterplot.js"></script>
+    <script src="js/radar.js"></script>
+    <script src="js/barchart.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html> 
