@@ -2003,9 +2003,9 @@ canvas {
 
 /* 在 CSS 中添加 */
 .selectors-container {
-    left: 50% !important;
+    left: 17% !important;
     width: auto !important;
-    min-width: 600px;
+    min-width: 20px;
     display: flex !important;
     justify-content: center;
     top: 20px !important;

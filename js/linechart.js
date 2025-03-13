@@ -30,28 +30,11 @@ class LineChart {
             .attr("class", "selectors-container")
             .style("position", "absolute")
             .style("top", "10px")
-            .style("left", "50%")
-            .style("transform", "translateX(-60%)")
+            .style("left", "10px")
             .style("z-index", "10")
             .style("display", "flex")
-            .style("gap", "40px")  // Large gap between containers
+            .style("gap", "40px")
             .style("align-items", "flex-start");
-
-        // Create rank range container
-        const rankContainer = vis.selectorsContainer.append("div")
-            .style("background", "white")
-            .style("padding", "15px")
-            .style("border-radius", "5px")
-            .style("box-shadow", "0 2px 4px rgba(0,0,0,0.1)")
-            .style("min-width", "200px");
-
-        // Create metric container
-        const metricContainer = vis.selectorsContainer.append("div")
-            .style("background", "white")
-            .style("padding", "15px")
-            .style("border-radius", "5px")
-            .style("box-shadow", "0 2px 4px rgba(0,0,0,0.1)")
-            .style("min-width", "300px");
 
         // Create chart container
         vis.chartContainer = vis.container.append("div")
@@ -109,8 +92,9 @@ class LineChart {
         vis.svg.append("text")
             .attr("class", "chart-title")
             .attr("x", vis.width / 2)
-            .attr("y", -20)
+            .attr("y", -40)
             .style("text-anchor", "middle")
+            .style("font-size", "24px")
             .text("University Performance Over Time");
 
         // Initialize tooltip
@@ -120,37 +104,65 @@ class LineChart {
 
         // Create selectors
         this.createSelectors();
+        this.createSelector2();
 
         // Initial data processing
         this.wrangleData();
+
+        // 添加点击事件到容器
+        vis.container.on("click", function(event) {
+            // 检查点击是否在 infoContainer 外
+            if (!event.target.closest('.university-info') && !event.target.closest('.line') && vis.selectedUniversity) {
+                // 关闭信息面板
+                vis.selectedUniversity = null;
+                vis.chartContainer.style("width", "100%");
+                vis.infoContainer.style("width", "0").style("padding", "0");
+                vis.isExpanded = true;
+                vis.updateVis();
+            }
+        });
+
+        // 阻止信息面板的点击事件冒泡
+        vis.infoContainer.on("click", function(event) {
+            event.stopPropagation();
+        });
     }
 
-    // 修改 createSelectors 方法中的选择器创建部分
     createSelectors() {
         const vis = this;
-
-        // Create rank range selector
+        
+        // 创建 Rank Range 容器
+        const rankContainer = vis.selectorsContainer.append("div")
+            .attr("class", "rank-container")
+            .style("background", "white")
+            .style("padding", "15px")
+            .style("border-radius", "7px")
+            .style("box-shadow", "0 2px 4px rgba(0,0,0,0)")
+            .style("min-width", "200px")
+            .style("margin-top", "80px")
+            .style("margin-left", "-150px");  // 向左移动
+            
+        
+        // 添加 Rank Range 标签和选择器
+        rankContainer.append("label")
+            .text("Rank Range:")
+            .style("font-weight", "bold")
+            .style("font-size", "13px")  // 调整字体大小
+            .style("display", "block")
+            .style("margin-bottom", "3px");
+        
+        // 创建 Rank Range 选项
         const rankRanges = [];
         for (let i = 1; i <= 100; i += 10) {
             rankRanges.push(`${i}-${i + 9}`);
         }
-
-        // Add rank range selector to rank container
-        const rankSelector = d3.select(vis.selectorsContainer.node().children[0])
-            .append("div")
-            .style("display", "flex")
-            .style("flex-direction", "column")
-            .style("gap", "8px");
-
-        rankSelector.append("label")
-            .text("Rank Range:")
-            .style("font-weight", "bold")
-            .style("font-size", "14px");
-
-        rankSelector.append("select")
+        
+        // 添加 Rank Range 下拉框
+        rankContainer.append("select")
             .attr("class", "rank-selector")
-            .style("padding", "8px")
-            .style("width", "100%")
+            .style("width", "80px")  // 调整宽度
+            .style("padding", "4px 7px")  // 调整内边距，上下内边距控制高度
+            .style("font-size", "14px")  // 调整下拉框文字大小
             .style("border", "1px solid #ccc")
             .style("border-radius", "4px")
             .on("change", function() {
@@ -162,9 +174,36 @@ class LineChart {
             .enter()
             .append("option")
             .attr("value", d => d)
-            .text(d => d);
+            .text(d => d)
+            .property("selected", d => d === vis.selectedRankRange);
+    }
 
-        // Create metric selector
+    createSelector2() {
+        const vis = this;
+        console.log("Creating Score Metric Selector");
+        
+        // 创建 Score Metric 容器
+        const metricContainer = vis.selectorsContainer.append("div")
+            .attr("class", "metric-container")
+            .style("background", "transparent")  // 设置背景为透明
+            .style("padding", "15px")
+            .style("border-radius", "7px")
+            .style("box-shadow", "none")  // 移除阴影
+            .style("min-width", "200px")
+            .style("margin-top", "50px")     // 控制垂直位置
+            .style("margin-left", "50px");    // 控制水平位置，与 Rank Range 的间距
+        
+        // 添加 Score Metric 标签和选择器
+        metricContainer.append("label")
+            .text("Score Metric:")
+            .style("font-weight", "bold")
+            .style("font-size", "13px")
+            .style("display", "block")
+            .style("margin-bottom", "3px")     // 控制与下方下拉框的距离
+            .style("margin-top", "30px")       // 控制上方间距
+            .style("margin-left", "-180px")      // 控制左侧间距
+            .style("padding-left", "5px");     // 文字缩进
+        
         const metrics = [
             { value: 'scores_overall', text: 'Overall Score' },
             { value: 'scores_teaching', text: 'Teaching Score' },
@@ -173,25 +212,16 @@ class LineChart {
             { value: 'scores_industry_income', text: 'Industry Income Score' },
             { value: 'scores_international_outlook', text: 'International Outlook Score' }
         ];
-
-        // Add metric selector to metric container
-        const metricSelector = d3.select(vis.selectorsContainer.node().children[1])
-            .append("div")
-            .style("display", "flex")
-            .style("flex-direction", "column")
-            .style("gap", "8px");
-
-        metricSelector.append("label")
-            .text("Score Metric:")
-            .style("font-weight", "bold")
-            .style("font-size", "14px");
-
-        metricSelector.append("select")
+        
+        // 添加 Score Metric 下拉框
+        metricContainer.append("select")
             .attr("class", "metric-selector")
-            .style("padding", "8px")
-            .style("width", "100%")
+            .style("width", "100px")  // 调整宽度
+            .style("padding", "5px 8px")
+            .style("font-size", "12px")
             .style("border", "1px solid #ccc")
             .style("border-radius", "4px")
+            .style("margin-left", "-485px")
             .on("change", function() {
                 vis.selectedMetric = this.value;
                 vis.wrangleData();
@@ -201,7 +231,8 @@ class LineChart {
             .enter()
             .append("option")
             .attr("value", d => d.value)
-            .text(d => d.text);
+            .text(d => d.text)
+            .property("selected", d => d.value === vis.selectedMetric);
     }
 
     wrangleData() {
@@ -250,17 +281,32 @@ class LineChart {
     updateVis() {
         const vis = this;
 
+        // 计算当前显示数据的最小值和最大值
+        const yMin = d3.min(vis.displayData, d => d3.min(d.values, v => v.score));
+        const yMax = d3.max(vis.displayData, d => d3.max(d.values, v => v.score));
+        
+        // 添加一些边距，使图表更美观
+        const padding = (yMax - yMin) * 0.1;  // 10% 的边距
+        
+        // 更新 y 轴的范围
+        vis.y.domain([
+            Math.max(0, yMin - padding),  // 确保最小值不小于 0
+            Math.min(100, yMax + padding)  // 确保最大值不超过 100
+        ]);
+
+        // 更新 y 轴
+        vis.yAxis.transition()
+            .duration(1000)  // 添加过渡动画
+            .call(d3.axisLeft(vis.y));
+
         // Update scales
         vis.x.domain([
             d3.min(vis.displayData, d => d3.min(d.values, v => v.year)),
             d3.max(vis.displayData, d => d3.max(d.values, v => v.year))
         ]);
 
-        vis.y.domain([0, 100]);
-
         // Update axes
         vis.xAxis.call(d3.axisBottom(vis.x).tickFormat(d3.format("d")));
-        vis.yAxis.call(d3.axisLeft(vis.y));
 
         // Create line generator
         const line = d3.line()
@@ -294,7 +340,8 @@ class LineChart {
                     .style("opacity", 1)
                     .html(`<strong>${d.name}</strong><br/>
                            Score: ${d.values[d.values.length-1].score.toFixed(1)}<br/>
-                           Rank: ${d.values[d.values.length-1].rank}`)
+                           Rank: ${d.values[d.values.length-1].rank}<br/>
+                           <span style="color: blue;">Click the line to see details</span>`)
                     .style("left", (event.pageX + 10) + "px")
                     .style("top", (event.pageY - 10) + "px");
             })
@@ -365,23 +412,55 @@ class LineChart {
                 .style("width", "30%")
                 .style("padding", "20px")
                 .html(`
-                    <h2>${data.name}</h2>
-                    <p><strong>Location:</strong> ${data.values[0].location}</p>
-                    <p><strong>Current Rank:</strong> ${data.values[data.values.length-1].rank}</p>
-                    <p><strong>Current Score:</strong> ${data.values[data.values.length-1].score.toFixed(1)}</p>
-                    <h3>Score History</h3>
-                    <table>
-                        <tr><th>Year</th><th>Score</th><th>Rank</th></tr>
-                        ${data.values.map(v => `
-                            <tr>
-                                <td>${v.year}</td>
-                                <td>${v.score.toFixed(1)}</td>
-                                <td>${v.rank}</td>
-                            </tr>
-                        `).join('')}
-                    </table>
+                    <div style="position: relative;">
+                        <h2>${data.name}</h2>
+                        <p><strong>Location:</strong> ${data.values[0].location}</p>
+                        <p><strong>Current Rank:</strong> ${data.values[data.values.length-1].rank}</p>
+                        <p><strong>Current Score:</strong> ${data.values[data.values.length-1].score.toFixed(1)}</p>
+                        <h3>Score History</h3>
+                        <table>
+                            <tr><th>Year</th><th>Score</th><th>Rank</th></tr>
+                            ${data.values.map(v => `
+                                <tr>
+                                    <td>${v.year}</td>
+                                    <td>${v.score.toFixed(1)}</td>
+                                    <td>${v.rank}</td>
+                                </tr>
+                            `).join('')}
+                        </table>
+                        <div style="margin-top: 20px;">
+                            <button id="close-info" style="
+                                background: #4a90e2;
+                                border: none;
+                                border-radius: 4px;
+                                padding: 8px 15px;
+                                cursor: pointer;
+                                font-size: 14px;
+                                color: white;
+                                transition: all 0.3s ease;
+                            ">Close</button>
+                        </div>
+                    </div>
                 `);
             vis.isExpanded = false;
+
+            // 添加按钮事件
+            d3.select("#close-info")
+                .on("mouseover", function() {
+                    d3.select(this)
+                        .style("background", "#357abd");
+                })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .style("background", "#4a90e2");
+                })
+                .on("click", function() {
+                    vis.selectedUniversity = null;
+                    vis.chartContainer.style("width", "100%");
+                    vis.infoContainer.style("width", "0").style("padding", "0");
+                    vis.isExpanded = true;
+                    vis.updateVis();
+                });
         }
 
         // Update visualization
