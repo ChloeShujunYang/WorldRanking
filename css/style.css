@@ -2022,8 +2022,9 @@ canvas {
 
 /* Line chart page specific styles */
 #page5 .main-title {
-    margin-top: 200px;  /* Increase this value to move the title lower */
+    margin-top: 200px;
     margin-bottom: 0px;
+    margin-left: -150px;
     font-size: 40px;
     color: #333;
     text-align: center;
