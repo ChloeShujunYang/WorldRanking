@@ -5,6 +5,10 @@ class WorldMap {
         this.data = data;
         this.container = document.getElementById(containerId);
         
+        // Get available years from data
+        this.availableYears = [...new Set(this.data.map(d => d.year))].sort();
+        this.selectedYear = this.availableYears[this.availableYears.length - 1]; // Default to most recent year
+        
         // Set up dimensions
         this.margin = { top: 20, right: 20, bottom: 20, left: 20 };
         this.width = this.container.clientWidth - this.margin.left - this.margin.right;
@@ -21,15 +25,20 @@ class WorldMap {
     }
     
     processData() {
-        // Group universities by location and calculate metrics
-        this.locationData = {};
+        const vis = this;
         
-        this.data.forEach(d => {
+        // Filter data by selected year
+        const yearData = vis.data.filter(d => d.year === vis.selectedYear);
+        
+        // Group universities by location and calculate metrics
+        vis.locationData = {};
+        
+        yearData.forEach(d => {
             console.log(`Processing university: ${d.name}, Year: ${d.year}`); // Log each university's year
             if (!d.location) return;
             
-            if (!this.locationData[d.location]) {
-                this.locationData[d.location] = {
+            if (!vis.locationData[d.location]) {
+                vis.locationData[d.location] = {
                     name: d.location,
                     universities: [],
                     scores_overall: 0,
@@ -43,30 +52,30 @@ class WorldMap {
             }
             
             // Add university to location
-            this.locationData[d.location].universities.push(d.name);
+            vis.locationData[d.location].universities.push(d.name);
             
             // Sum up scores
-            this.locationData[d.location].scores_overall += d.scores_overall || 0;
-            this.locationData[d.location].scores_teaching += d.scores_teaching || 0;
-            this.locationData[d.location].scores_international_outlook += d.scores_international_outlook || 0;
-            this.locationData[d.location].scores_industry_income += d.scores_industry_income || 0;
-            this.locationData[d.location].scores_research += d.scores_research || 0;
-            this.locationData[d.location].scores_citations += d.scores_citations || 0;
-            this.locationData[d.location].count++;
+            vis.locationData[d.location].scores_overall += d.scores_overall || 0;
+            vis.locationData[d.location].scores_teaching += d.scores_teaching || 0;
+            vis.locationData[d.location].scores_international_outlook += d.scores_international_outlook || 0;
+            vis.locationData[d.location].scores_industry_income += d.scores_industry_income || 0;
+            vis.locationData[d.location].scores_research += d.scores_research || 0;
+            vis.locationData[d.location].scores_citations += d.scores_citations || 0;
+            vis.locationData[d.location].count++;
         });
         
         // Convert to array for easier processing
-        this.locationArray = Object.values(this.locationData);
+        vis.locationArray = Object.values(vis.locationData);
         
         // Find min and max values for color scale
-        this.minScore = d3.min(this.locationArray, d => d.scores_overall);
-        this.maxScore = d3.max(this.locationArray, d => d.scores_overall);
+        vis.minScore = d3.min(vis.locationArray, d => d.scores_overall);
+        vis.maxScore = d3.max(vis.locationArray, d => d.scores_overall);
         
         // Calculate average score for reference
-        this.avgScore = d3.mean(this.locationArray, d => d.scores_overall);
+        vis.avgScore = d3.mean(vis.locationArray, d => d.scores_overall);
         
-        console.log("Processed location data:", this.locationArray);
-        console.log("Min score:", this.minScore, "Max score:", this.maxScore, "Avg score:", this.avgScore);
+        console.log(`Year ${vis.selectedYear} data:`, vis.locationArray);
+        console.log(`Year ${vis.selectedYear} - Min score: ${vis.minScore}, Max score: ${vis.maxScore}, Avg score: ${vis.avgScore}`);
         
         // Create a lookup table for country data
         this.wrangleData();
@@ -166,6 +175,9 @@ class WorldMap {
         
         // Create legend first (so it appears behind the globe)
         vis.createLegend();
+        
+        // Create the year selector
+        vis.createYearSelector();
         
         // Load world map data
         d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
@@ -367,11 +379,13 @@ class WorldMap {
             .attr("height", 10)
             .attr("fill", d => d);
         
-        // Add legend axis
+        // Add axis to legend with a class
         vis.legend.append("g")
-            .attr("transform", "translate(0, 10)")
+            .attr("class", "legend-axis")
+            .attr("transform", "translate(0,10)")
             .call(legendAxis)
-            .select(".domain").remove();
+            .selectAll("text")
+            .style("font-size", "10px");
     }
     
     makeGlobeDraggable() {
@@ -539,5 +553,121 @@ class WorldMap {
 
         // Update legend position if needed
         this.createLegend();
+    }
+
+    // Add a method to create the year selector
+    createYearSelector() {
+        const vis = this;
+        
+        // Create a container for the year selector
+        const selectorContainer = d3.select("#page4 .content-wrapper")
+            .append("div")
+            .attr("class", "year-selector-container")
+            .style("position", "absolute")
+            .style("top", "80px")
+            .style("right", "50px")
+            .style("z-index", "100")
+            .style("background-color", "rgba(255, 255, 255, 0.8)")
+            .style("padding", "10px")
+            .style("border-radius", "5px")
+            .style("box-shadow", "0 2px 5px rgba(0, 0, 0, 0.1)");
+        
+        // Add a label
+        selectorContainer.append("label")
+            .attr("for", "year-selector")
+            .text("Select Year: ")
+            .style("font-weight", "bold")
+            .style("margin-right", "10px");
+        
+        // Create the dropdown
+        const selector = selectorContainer.append("select")
+            .attr("id", "year-selector")
+            .style("padding", "5px")
+            .style("border-radius", "3px")
+            .style("border", "1px solid #ccc");
+        
+        // Add options for each year
+        selector.selectAll("option")
+            .data(vis.availableYears)
+            .enter()
+            .append("option")
+            .attr("value", d => d)
+            .text(d => d)
+            .property("selected", d => d === vis.selectedYear);
+        
+        // Add event listener
+        selector.on("change", function() {
+            vis.selectedYear = +this.value;
+            vis.updateVisualization();
+        });
+    }
+
+    // Add a method to update the visualization when the year changes
+    updateVisualization() {
+        const vis = this;
+        
+        // Process data for the new year
+        vis.processData();
+        
+        // Update color scale with new min/max values
+        vis.colorScale = d3.scalePow()
+            .exponent(0.3)
+            .domain([0, vis.maxScore])
+            .range([0, 1]);
+        
+        // Update country colors
+        vis.countries
+            .attr("fill", d => {
+                // Find matching location in our data
+                const countryName = d.properties.name;
+                let matchedLocation = null;
+                
+                // Try to match with our location data
+                Object.values(vis.locationData).forEach(location => {
+                    if (location.name === countryName || 
+                        location.name.includes(countryName) || 
+                        countryName.includes(location.name) ||
+                        (vis.countryNameMap[countryName] && location.name.includes(vis.countryNameMap[countryName]))) {
+                        matchedLocation = location;
+                    }
+                });
+                
+                if (matchedLocation) {
+                    // Apply the power scale to get a normalized value, then map to color
+                    const normalizedValue = vis.colorScale(matchedLocation.scores_overall);
+                    return vis.colorInterpolator(normalizedValue);
+                } else {
+                    return "#f7f4f9"; // Default lightest color
+                }
+            });
+        
+        // Update legend with new max value
+        vis.updateLegend();
+        
+        // Hide the left panel if it's visible
+        vis.leftPanel.style("opacity", "0");
+    }
+
+    // Add a method to update the legend
+    updateLegend() {
+        const vis = this;
+        
+        // Update legend scale
+        const legendScale = d3.scaleLinear()
+            .domain([0, vis.maxScore])
+            .range([0, 200]);
+        
+        // Update legend axis
+        const legendAxis = d3.axisBottom(legendScale)
+            .tickValues([0, Math.round(vis.maxScore * 0.1), Math.round(vis.maxScore * 0.25), 
+                         Math.round(vis.maxScore * 0.5), Math.round(vis.maxScore)])
+            .tickFormat(d3.format(",d"))
+            .tickSize(0);
+        
+        // Update axis
+        vis.legend.select(".legend-axis")
+            .call(legendAxis)
+            .selectAll("text")
+            .style("font-size", "10px");
     }
 }

@@ -2018,3 +2018,25 @@ canvas {
 .selectors-container label {
     white-space: nowrap;
 }
+
+/* Add styles for the year selector */
+.year-selector-container {
+    font-family: 'Open Sans', sans-serif;
+    color: #333;
+}
+
+#year-selector {
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#year-selector:hover {
+    border-color: #999;
+}
+
+#year-selector:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
