@@ -564,10 +564,10 @@ class WorldMap {
             .append("div")
             .attr("class", "year-selector-container")
             .style("position", "absolute")
-            .style("top", "80px")
-            .style("right", "50px")
+            .style("top", "100px")  // Position it below the title
+            .style("left", "30px")  // Position it on the left side
             .style("z-index", "100")
-            .style("background-color", "rgba(255, 255, 255, 0.8)")
+            .style("background-color", "rgba(255, 255, 255, 0.9)")
             .style("padding", "10px")
             .style("border-radius", "5px")
             .style("box-shadow", "0 2px 5px rgba(0, 0, 0, 0.1)");
@@ -575,7 +575,7 @@ class WorldMap {
         // Add a label
         selectorContainer.append("label")
             .attr("for", "year-selector")
-            .text("Select Year: ")
+            .text("Select Year:")
             .style("font-weight", "bold")
             .style("margin-right", "10px");
         
