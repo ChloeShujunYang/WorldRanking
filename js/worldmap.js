@@ -176,7 +176,19 @@ class WorldMap {
         // Create legend first (so it appears behind the globe)
         vis.createLegend();
         
-        // Create the year selector
+        // Modify the page title - make it smaller and move it to the center top
+        d3.select("#page4 .main-title")
+            .text("")  // Clear the text as we'll add it in createYearSelector
+            .style("font-size", "36px")
+            .style("position", "absolute")
+            .style("top", "20px")
+            .style("left", "50%")
+            .style("transform", "translateX(-50%)")
+            .style("margin", "0")
+            .style("text-align", "center")
+            .style("width", "100%");
+        
+        // Create the year selector integrated with the title
         vis.createYearSelector();
         
         // Load world map data
@@ -555,54 +567,139 @@ class WorldMap {
         this.createLegend();
     }
 
-    // Add a method to create the year selector
+    // Modify the createYearSelector method to improve the dropdown styling
     createYearSelector() {
         const vis = this;
         
-        // Create a container for the year selector
-        const selectorContainer = d3.select("#page4 .content-wrapper")
-            .append("div")
+        // First, remove the existing year selector if it exists
+        d3.select(".year-selector-container").remove();
+        
+        // Update the main title to include the year
+        const mainTitle = d3.select("#page4 .main-title");
+        
+        // Clear any existing content
+        mainTitle.html("");
+        
+        // Add the static part of the title
+        mainTitle.append("span")
+            .text("Global University Rankings in ");
+        
+        // Create a container for the year selector that will be styled as part of the title
+        const yearContainer = mainTitle.append("span")
             .attr("class", "year-selector-container")
-            .style("position", "absolute")
-            .style("top", "100px")  // Position it below the title
-            .style("left", "30px")  // Position it on the left side
-            .style("z-index", "100")
-            .style("background-color", "rgba(255, 255, 255, 0.9)")
-            .style("padding", "10px")
-            .style("border-radius", "5px")
-            .style("box-shadow", "0 2px 5px rgba(0, 0, 0, 0.1)");
+            .style("position", "relative")
+            .style("display", "inline-block");
         
-        // Add a label
-        selectorContainer.append("label")
-            .attr("for", "year-selector")
-            .text("Select Year:")
+        // Add the year as text with special styling
+        const yearText = yearContainer.append("span")
+            .attr("class", "selected-year")
+            .text(vis.selectedYear)
+            .style("color", "#cb181d")  // Use the same red as in your color scheme
             .style("font-weight", "bold")
-            .style("margin-right", "10px");
+            .style("cursor", "pointer")
+            .style("border-bottom", "2px dotted #cb181d")
+            .style("padding-bottom", "2px");
         
-        // Create the dropdown
-        const selector = selectorContainer.append("select")
-            .attr("id", "year-selector")
-            .style("padding", "5px")
-            .style("border-radius", "3px")
-            .style("border", "1px solid #ccc");
+        // Add a small dropdown arrow that looks better
+        yearContainer.append("span")
+            .html(" &#9662;")  // Unicode for a down arrow
+            .style("font-size", "0.7em")
+            .style("color", "#cb181d")
+            .style("position", "relative")
+            .style("top", "-2px");
         
-        // Add options for each year
-        selector.selectAll("option")
-            .data(vis.availableYears)
-            .enter()
-            .append("option")
-            .attr("value", d => d)
-            .text(d => d)
-            .property("selected", d => d === vis.selectedYear);
+        // Create a dropdown for year selection with improved styling
+        const dropdown = yearContainer.append("div")
+            .attr("class", "year-dropdown")
+            .style("position", "absolute")
+            .style("top", "100%")
+            .style("left", "50%")
+            .style("transform", "translateX(-50%)")
+            .style("background-color", "white")
+            .style("border", "1px solid #eee")
+            .style("border-radius", "8px")
+            .style("box-shadow", "0 4px 15px rgba(0,0,0,0.1)")
+            .style("z-index", "1000")
+            .style("display", "none")  // Initially hidden
+            .style("padding", "8px 0")
+            .style("margin-top", "10px")
+            .style("min-width", "120px")
+            .style("max-height", "200px")
+            .style("overflow-y", "auto")
+            .style("text-align", "center");
         
-        // Add event listener
-        selector.on("change", function() {
-            vis.selectedYear = +this.value;
-            vis.updateVisualization();
+        // Add a little arrow at the top of the dropdown
+        dropdown.append("div")
+            .style("position", "absolute")
+            .style("top", "-8px")
+            .style("left", "50%")
+            .style("transform", "translateX(-50%)")
+            .style("width", "0")
+            .style("height", "0")
+            .style("border-left", "8px solid transparent")
+            .style("border-right", "8px solid transparent")
+            .style("border-bottom", "8px solid white");
+        
+        // Add options for each year with improved styling
+        vis.availableYears.forEach(year => {
+            dropdown.append("div")
+                .attr("class", "year-option")
+                .text(year)
+                .style("padding", "8px 15px")
+                .style("cursor", "pointer")
+                .style("transition", "all 0.2s ease")
+                .style("color", year === vis.selectedYear ? "#cb181d" : "#333")
+                .style("font-weight", year === vis.selectedYear ? "bold" : "normal")
+                .style("font-size", "18px")
+                .style("border-left", year === vis.selectedYear ? "3px solid #cb181d" : "3px solid transparent")
+                .on("mouseover", function() {
+                    d3.select(this)
+                        .style("background-color", "#f8f8f8")
+                        .style("color", "#cb181d");
+                })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .style("background-color", "white")
+                        .style("color", year === vis.selectedYear ? "#cb181d" : "#333");
+                })
+                .on("click", function(event) {
+                    const selectedYear = +d3.select(this).text();
+                    vis.selectedYear = selectedYear;
+                    
+                    // Update the displayed year
+                    yearText.text(selectedYear);
+                    
+                    // Hide the dropdown
+                    dropdown.style("display", "none");
+                    
+                    // Update the visualization
+                    vis.updateVisualization();
+                    
+                    // Prevent the event from bubbling up
+                    if (event) event.stopPropagation();
+                });
+        });
+        
+        // Add a subtle separator between years
+        dropdown.selectAll(".year-option:not(:last-child)")
+            .style("border-bottom", "1px solid #f0f0f0");
+        
+        // Toggle dropdown when clicking on the year container
+        yearContainer.on("click", function(event) {
+            const isVisible = dropdown.style("display") === "block";
+            dropdown.style("display", isVisible ? "none" : "block");
+            
+            // Prevent the event from bubbling up
+            if (event) event.stopPropagation();
+        });
+        
+        // Hide dropdown when clicking elsewhere
+        d3.select("body").on("click", function() {
+            dropdown.style("display", "none");
         });
     }
 
-    // Add a method to update the visualization when the year changes
+    // Modify the updateVisualization method to update the title
     updateVisualization() {
         const vis = this;
         
@@ -646,6 +743,9 @@ class WorldMap {
         
         // Hide the left panel if it's visible
         vis.leftPanel.style("opacity", "0");
+        
+        // Update the year in the title
+        d3.select(".selected-year").text(vis.selectedYear);
     }
 
     // Add a method to update the legend
