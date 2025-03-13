@@ -23,7 +23,8 @@ class LineChart {
             .style("display", "flex")
             .style("width", "100%")
             .style("height", "100%")
-            .style("position", "relative");
+            .style("position", "relative")
+            .style("border", "none");  // Remove container border
 
         // Create selectors container with better positioning
         vis.selectorsContainer = vis.container.append("div")
@@ -41,7 +42,8 @@ class LineChart {
             .attr("class", "chart-container")
             .style("flex", "1")
             .style("transition", "width 0.3s ease")
-            .style("margin-top", "70px");  // Increased top margin to avoid overlap
+            .style("margin-top", "70px")
+            .style("border", "none");  // Remove chart container border
 
         // Create university info container (initially hidden)
         vis.infoContainer = vis.container.append("div")
@@ -88,14 +90,16 @@ class LineChart {
             .style("text-anchor", "middle")
             .text("Score");
 
-        // Add title
-        vis.svg.append("text")
-            .attr("class", "chart-title")
-            .attr("x", vis.width / 2)
-            .attr("y", -40)
-            .style("text-anchor", "middle")
-            .style("font-size", "24px")
-            .text("University Performance Over Time");
+        // // Add title with better positioning
+        // vis.svg.append("text")
+        //     .attr("class", "chart-title")
+        //     .attr("x", vis.width - 270)
+        //     .attr("y", -70)
+        //     .style("text-anchor", "middle")
+        //     .style("font-size", "24px")
+        //     .style("font-weight", "bold")
+        //     .style("transform", "translateX(0)")  // Ensure title is centered
+        //     .text("University Performance Over Time");
 
         // Initialize tooltip
         vis.tooltip = d3.select("body").append("div")
@@ -115,7 +119,7 @@ class LineChart {
             if (!event.target.closest('.university-info') && !event.target.closest('.line') && vis.selectedUniversity) {
                 // 关闭信息面板
                 vis.selectedUniversity = null;
-                vis.chartContainer.style("width", "100%");
+                vis.chartContainer.style("width", "100%").style("border", "none");  // Remove border when expanding
                 vis.infoContainer.style("width", "0").style("padding", "0");
                 vis.isExpanded = true;
                 vis.updateVis();
@@ -153,7 +157,7 @@ class LineChart {
         
         // 创建 Rank Range 选项
         const rankRanges = [];
-        for (let i = 1; i <= 100; i += 10) {
+        for (let i = 1; i <= 200; i += 10) {
             rankRanges.push(`${i}-${i + 9}`);
         }
         
@@ -401,16 +405,17 @@ class LineChart {
         if (vis.selectedUniversity && vis.selectedUniversity.name === data.name) {
             // Deselect if clicking the same university
             vis.selectedUniversity = null;
-            vis.chartContainer.style("width", "100%");
+            vis.chartContainer.style("width", "100%").style("border", "none");  // Remove border when expanding
             vis.infoContainer.style("width", "0").style("padding", "0");
             vis.isExpanded = true;
         } else {
             // Select new university
             vis.selectedUniversity = data;
-            vis.chartContainer.style("width", "70%");
+            vis.chartContainer.style("width", "70%").style("border", "none");  // Remove border when contracting
             vis.infoContainer
                 .style("width", "30%")
                 .style("padding", "20px")
+                .style("border-left", "none")  // Remove left border of info panel
                 .html(`
                     <div style="position: relative;">
                         <h2>${data.name}</h2>

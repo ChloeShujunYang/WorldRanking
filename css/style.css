@@ -1338,6 +1338,7 @@ canvas {
     position: relative;
     background-color: white;
     display: flex;
+    margin-top: -100px; /* Adjust this value to move the chart up */
 }
 
 #line-chart {
@@ -2017,4 +2018,20 @@ canvas {
 
 .selectors-container label {
     white-space: nowrap;
+}
+
+/* Line chart page specific styles */
+#page5 .main-title {
+    margin-top: 200px;  /* Increase this value to move the title lower */
+    margin-bottom: 0px;
+    font-size: 40px;
+    color: #333;
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+}
+
+.chart-wrapper {
+    width: 100%;
+    padding: 20px;
+    margin-top: 20px;
 }
