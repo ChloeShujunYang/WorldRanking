@@ -2040,3 +2040,69 @@ canvas {
     border-color: #4a90e2;
     box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
 }
+
+/* Conclusion page styles - matching the uploaded image exactly with proper font weight */
+#page6\.5 {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: serif; /* Using serif font to match the image */
+}
+
+#page6\.5 .content-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.conclusion-container {
+    width: 80%;
+    max-width: 900px;
+    text-align: center;
+}
+
+.conclusion-title {
+    font-size: 48px;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: 600; /* Increased font weight to match image */
+    font-family: serif;
+    line-height: 1.2;
+}
+
+.conclusion-paragraph {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #333;
+    text-align: justify;
+    margin-bottom: 40px;
+    font-weight: 500; /* Increased font weight to match image */
+    font-family: serif;
+}
+
+.conclusion-question {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #333;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 500; /* Increased font weight to match image */
+    font-family: serif;
+}
+
+.conclusion-insight {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #333;
+    text-align: center;
+    font-weight: 500; /* Increased font weight to match image */
+    font-family: serif;
+}
+
+.highlight-text {
+    color: #a50f15;
+    font-weight: 500; /* Increased font weight to match image */
+}
