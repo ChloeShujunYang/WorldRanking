@@ -16,6 +16,12 @@ class Scatterplot {
             d.scores_citations > 0
         );
         
+        // Get year range from data
+        this.yearRange = {
+            min: d3.min(this.data, d => d.year),
+            max: d3.max(this.data, d => d.year)
+        };
+        
         this.availableScores = [
             'scores_overall',
             'scores_teaching',
@@ -38,50 +44,61 @@ class Scatterplot {
             };
         });
         
-        this.initVis();
+        this.clearChart(); // Clear any existing content
+        this.initVis(); // Initialize visualization
+    }
+
+    clearChart() {
+        // Clear existing content in the scatterplot container
+        d3.select("#" + this.containerId).selectAll("*").remove();
     }
 
     initVis() {
         const vis = this;
         console.log("9. InitVis called");
         
-        // Check if container exists
-        const container = document.getElementById(vis.containerId);
-        console.log("10. Container element:", container);
-        console.log("11. Container dimensions:", {
-            clientWidth: container.clientWidth,
-            clientHeight: container.clientHeight,
-            offsetWidth: container.offsetWidth,
-            offsetHeight: container.offsetHeight,
-            style: container.style.cssText
-        });
-
-        // Set up the SVG drawing area
-        vis.width = container.clientWidth || 800; // Fallback width
-        vis.height = container.clientHeight || 600; // Fallback height
+        // Calculate required width based on ovals
+        const ovalWidth = 160;
+        const ovalSpacing = 40;
+        const totalOvalWidth = (ovalWidth + ovalSpacing) * vis.availableScores.length;
         
-        console.log("SVG dimensions:", {
-            width: vis.width,
-            height: vis.height,
-            innerWidth: vis.innerWidth,
-            innerHeight: vis.innerHeight
-        });
+        // Set up the SVG drawing area
+        const containerWidth = document.getElementById(vis.containerId).clientWidth;
+        const containerHeight = document.getElementById(vis.containerId).clientHeight;
+        
+        // Increase left margin to center the plot
+        vis.margin = {
+            top: 70,  // Increased to make room for title
+            right: 50,
+            bottom: 100,
+            left: 150  // Increased from 80 to 150
+        };
 
+        // Calculate required width
+        vis.width = Math.max(containerWidth, totalOvalWidth + vis.margin.left + vis.margin.right);
+        vis.height = containerHeight;
+        
+        vis.innerWidth = vis.width - vis.margin.left - vis.margin.right;
+        vis.innerHeight = vis.height - vis.margin.top - vis.margin.bottom;
+
+        // Create SVG with calculated width
         vis.svg = d3.select("#" + vis.containerId)
         .append("svg")
             .attr("width", vis.width)
             .attr("height", vis.height);
-        
-        console.log("SVG element created:", vis.svg.node());
 
-        // Set margins with extra space for variable selection ovals
-        vis.margin = { top: 20, right: 50, bottom: 100, left: 80 };
-        vis.innerWidth = vis.width - vis.margin.left - vis.margin.right;
-        vis.innerHeight = vis.height - vis.margin.top - vis.margin.bottom;
-
-        // Create group for the visualization
+        // Add container for plot
         vis.g = vis.svg.append("g")
             .attr("transform", `translate(${vis.margin.left},${vis.margin.top})`);
+
+        // Add title with more space for two lines
+        vis.title = vis.svg.append("text")
+            .attr("class", "plot-title")
+            .attr("x", vis.width / 2)
+            .attr("y", 25)  // Adjusted y position for two-line title
+            .attr("text-anchor", "middle")
+            .style("font-size", "18px")
+            .style("font-weight", "bold");
 
         // Initialize scales
         vis.x = d3.scaleLinear()
@@ -129,17 +146,24 @@ class Scatterplot {
 
     createVariableSelectors() {
         const vis = this;
-        const ovalWidth = 80;
+        
+        const ovalWidth = 160;
         const ovalHeight = 30;
+        const ovalSpacing = 40;
+        
+        // Calculate total width needed for all ovals
+        const totalWidth = (ovalWidth + ovalSpacing) * vis.availableScores.length - ovalSpacing;
+        // Calculate starting x position to center the ovals
+        const startX = (vis.width - totalWidth) / 2;
         
         // Create variable selection ovals below plot - moved lower
         const selectionGroup = vis.svg.append("g")
-            .attr("transform", `translate(${vis.margin.left},${vis.height - 40})`);  // Changed from -60 to -40
+            .attr("transform", `translate(${startX},${vis.height - 20})`);  // Changed from -30 to -20
 
         // Store initial positions for each score
         vis.availableScores.forEach((score, i) => {
             vis.scoreStates[score].position = {
-                x: i * (ovalWidth + 20),
+                x: i * (ovalWidth + ovalSpacing),
                 y: 0
             };
         });
@@ -155,14 +179,14 @@ class Scatterplot {
         vis.updateScoreSelectors();
 
         // Create axis variable indicators
-        // X-axis selector - kept at original height
+        // X-axis selector - moved lower
         vis.xSelector = vis.svg.append("g")
             .attr("class", "axis-selector x")
-            .attr("transform", `translate(${vis.margin.left + vis.innerWidth/2},${vis.height - 90})`);
+            .attr("transform", `translate(${vis.margin.left + vis.innerWidth/2},${vis.height - 60})`);  // Changed from -70 to -60
 
         vis.xSelector.append("ellipse")
-            .attr("rx", ovalWidth / 2)
-            .attr("ry", ovalHeight / 2)
+            .attr("rx", ovalWidth/2)  // Wider oval
+            .attr("ry", ovalHeight/2)
             .attr("fill", "#ffffff")
             .attr("stroke", "#666");
 
@@ -171,14 +195,14 @@ class Scatterplot {
             .attr("dy", "0.3em")
             .style("font-weight", "bold");
 
-        // Y-axis
+        // Y-axis selector - keep same position
         vis.ySelector = vis.svg.append("g")
             .attr("class", "axis-selector y")
             .attr("transform", `translate(${vis.margin.left - 60},${vis.margin.top + vis.innerHeight/2}) rotate(-90)`);
 
         vis.ySelector.append("ellipse")
-            .attr("rx", ovalWidth / 2)
-            .attr("ry", ovalHeight / 2)
+            .attr("rx", ovalWidth/2)  // Wider oval
+            .attr("ry", ovalHeight/2)
             .attr("fill", "#ffffff")
             .attr("stroke", "#666");
 
@@ -193,17 +217,9 @@ class Scatterplot {
     updateScoreSelectors() {
         const vis = this;
         
-        // Update positions and states of all selectors
         vis.scoreSelectors.each(function(score) {
             const selector = d3.select(this);
             const isDraggable = vis.scoreStates[score].isDraggable;
-            const position = vis.scoreStates[score].position;
-            
-            // Update position
-            selector
-                .transition()
-                .duration(200)
-                .attr("transform", `translate(${position.x},${position.y})`);
             
             // Remove old elements
             selector.selectAll("*").remove();
@@ -217,9 +233,9 @@ class Scatterplot {
                 selector.style("cursor", "default");
             }
             
-            // Add oval
+            // Add oval with wider width
             selector.append("ellipse")
-                .attr("rx", 40)
+                .attr("rx", 80)  // Doubled from 40
                 .attr("ry", 15)
                 .attr("fill", isDraggable ? "#dddddd" : "#ffffff")
                 .attr("stroke", "#666");
@@ -317,6 +333,7 @@ class Scatterplot {
             // Update visualizations
             vis.updateScoreSelectors();
             vis.updateAxisSelectors();
+            vis.updateTitle();  // Update title when variables change
             vis.renderTransition();
         }
         
@@ -353,8 +370,41 @@ class Scatterplot {
             .attr("cy", d => vis.y(d[vis.currentY]));
     }
 
+    updateTitle() {
+        const vis = this;
+        
+        // Format variable names for title
+        const formatText = (text) => {
+            return text.split("_")
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(" ");
+        };
+
+        const xVar = formatText(vis.currentX.replace("scores_", ""));
+        const yVar = formatText(vis.currentY.replace("scores_", ""));
+        
+        // Create multi-line title
+        vis.title
+            .selectAll("tspan").remove();  // Clear existing title
+            
+        vis.title
+            .append("tspan")
+            .text(`Scatter Plot of ${xVar} Score vs. ${yVar} Score`)
+            .attr("x", vis.width / 2)
+            .attr("dy", 0);
+            
+        vis.title
+            .append("tspan")
+            .text(`of Universities Around the World From ${vis.yearRange.min} to ${vis.yearRange.max}`)
+            .attr("x", vis.width / 2)
+            .attr("dy", "1.2em");
+    }
+
     render() {
         const vis = this;
+
+        // Update title
+        vis.updateTitle();
 
         // Clear existing content
         vis.g.selectAll(".point").remove();

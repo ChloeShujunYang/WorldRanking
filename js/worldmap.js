@@ -25,6 +25,7 @@ class WorldMap {
         this.locationData = {};
         
         this.data.forEach(d => {
+            console.log(`Processing university: ${d.name}, Year: ${d.year}`); // Log each university's year
             if (!d.location) return;
             
             if (!this.locationData[d.location]) {
@@ -104,17 +105,8 @@ class WorldMap {
     initVis() {
         const vis = this;
         
-        // Modify the page title - make it smaller and move it to the center top
-        d3.select("#page4 .main-title")
-            .text("Global University Rankings")
-            .style("font-size", "36px")  // Smaller font size
-            .style("position", "absolute")
-            .style("top", "20px")
-            .style("left", "50%")
-            .style("transform", "translateX(-50%)")
-            .style("margin", "0")
-            .style("text-align", "center")
-            .style("width", "100%");
+        // Clear any existing map before creating a new one
+        d3.select("#" + vis.containerId).select("svg").remove(); // Remove existing SVG if it exists
         
         // Create SVG drawing area
         vis.svg = d3.select("#" + vis.containerId)
@@ -298,7 +290,10 @@ class WorldMap {
                         // Find matching location in our data
                         const countryName = d.properties.name;
                         let matchedLocation = null;
-                        
+
+                        // Log the clicked country name
+                        console.log(`Clicked country: ${countryName}`);
+
                         // Try to match with our location data
                         Object.values(vis.locationData).forEach(location => {
                             if (location.name === countryName || 
@@ -308,24 +303,22 @@ class WorldMap {
                                 matchedLocation = location;
                             }
                         });
-                        
+
+                        // Log the matched location data
                         if (matchedLocation) {
-                            // Update the left panel with the location information
-                            vis.updateLeftPanel(matchedLocation);
-                            
-                            // Log data to console
-                            console.log(`Country: ${matchedLocation.name}`);
-                            console.log(`Universities: ${matchedLocation.universities.length}`);
-                            console.log(`Overall Score: ${matchedLocation.scores_overall}`);
-                            console.log(`Teaching Score: ${matchedLocation.scores_teaching}`);
-                            console.log(`International Outlook Score: ${matchedLocation.scores_international_outlook}`);
-                            console.log(`Industry Income Score: ${matchedLocation.scores_industry_income}`);
-                            console.log(`Research Score: ${matchedLocation.scores_research}`);
-                            console.log(`Citations Score: ${matchedLocation.scores_citations}`);
-                            console.log(`Universities: ${matchedLocation.universities.join(', ')}`);
+                            console.log(`Matched location data:`, matchedLocation);
+
+                            // Update the bar chart with top 5 universities
+                            const topUniversities = matchedLocation.universities.slice(0, 5);
+                            console.log(`Top universities for ${countryName}:`, topUniversities);
+                            barChart.updateChart(matchedLocation.name); // Pass the country name instead of universities
+
+                            // Update the radar chart with the top university
+                            const topUniversity = matchedLocation.universities[0];
+                            console.log(`Top university for radar chart:`, topUniversity);
+                            radarChart.updateChart(topUniversity); // Assuming the first university is the top one
                         } else {
-                            // Hide the left panel if no data is available
-                            vis.leftPanel.style("opacity", "0");
+                            console.warn(`No matching location found for ${countryName}`);
                         }
                     });
                 
@@ -520,33 +513,31 @@ class WorldMap {
     render() {
         const vis = this;
         
-        // Update width and height based on window size
+        // Update dimensions
         vis.width = vis.container.clientWidth - vis.margin.left - vis.margin.right;
         vis.height = vis.container.clientHeight - vis.margin.top - vis.margin.bottom;
-        
+
         // Update SVG dimensions
-        d3.select("#" + vis.containerId)
-            .select("svg")
+        vis.svg
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
             .attr("height", vis.height + vis.margin.top + vis.margin.bottom);
-        
+
         // Update projection
         vis.projection
             .translate([vis.width / 2, vis.height / 2])
             .scale(Math.min(vis.width, vis.height) * 0.4);
-        
-        // Update path generator
-        vis.path = d3.geoPath().projection(vis.projection);
-        
-        // Update all paths
-        if (vis.globeGroup) {
-            vis.globeGroup.selectAll("path")
-                .attr("d", vis.path);
-        }
-        
-        // Update legend position if it exists
-        if (vis.legend) {
-            vis.legend.attr('transform', `translate(${vis.width / 2 - 100}, ${vis.height - 30})`);
-        }
+
+        // Update all paths with new projection
+        vis.svg.select(".ocean")
+            .attr("d", vis.path);
+
+        vis.svg.select(".graticule")
+            .attr("d", vis.path);
+
+        vis.svg.selectAll(".country")
+            .attr("d", vis.path);
+
+        // Update legend position if needed
+        this.createLegend();
     }
 }

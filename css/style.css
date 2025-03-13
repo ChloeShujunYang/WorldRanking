@@ -17,6 +17,828 @@ body {
 .container {
     max-width: 1200px;
     margin: 0 auto;
+}
+
+/* Header styles */
+.header-image {
+    background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)),
+                url('../images/header-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3rem;
+}
+
+.header-title {
+    color: #fff;
+    font-size: 3.5rem;
+    text-align: center;
+    max-width: 800px;
+    padding: 0 2rem;
+}
+
+/* Content section styles */
+.content-section {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 3rem;
+}
+
+.content-section h2 {
+    margin-bottom: 2rem;
+    color: #2c3e50;
+}
+
+.chart-wrapper {
+    display: flex;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.chart-column {
+    flex: 1;
+    min-height: 400px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Stats section styles */
+.stats-section {
+    margin-bottom: 3rem;
+}
+
+.stat-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+}
+
+.stat-card {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 1rem 0;
+}
+
+.stat-description {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+/* Footer styles */
+footer {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.source p {
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.source ul {
+    list-style: none;
+}
+
+.source a {
+    color: #3498db;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.source a:hover {
+    color: #2980b9;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .chart-wrapper {
+        flex-direction: column;
+    }
+    
+    .header-title {
+        font-size: 2.5rem;
+    }
+    
+    .container {
+        padding: 1rem;
+    }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Page container styles */
+.page-container {
+    height: 100vh;
+    overflow-y: auto;
+    scroll-snap-type: y mandatory;
+    position: relative;
+    opacity: 0; /* Initial hidden */
+    transition: opacity 0.3s;
+}
+
+/* Individual page styles */
+.page {
+    height: 100vh;
+    scroll-snap-align: start;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: transparent;
+    border: none;
+}
+
+/* Content wrapper styles for full-screen effect */
+.content-wrapper {
+    max-width: 1200px;
+    width: 90%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    background-color: white;
+    box-shadow: none;
+    border: none;
+}
+
+/* Scroll hint styles */
+.scroll-hint {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    color: white;
+}
+
+.arrow-down {
+    width: 20px;
+    height: 20px;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+    transform: rotate(45deg);
+    margin: 20px auto;
+    animation: bounce 2s infinite;
+}
+
+/* Navigation dots styles */
+.page-nav {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+}
+
+.page-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.page-nav li {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.3);
+    margin: 10px 0;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.page-nav li:first-child.active ~ li,
+.page-nav li:first-child.active {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+.page-nav li.active {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.page-nav li:first-child.active,
+.page-nav li:first-child.active ~ li.active {
+    background-color: white;
+}
+
+/* First page specific styles */
+#page1 {
+    position: relative;
+    height: 100vh;
+    width: 100%;
+    scroll-snap-align: start;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+/* Background image styles */
+.parallax-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.background-image {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../img/University-Collage.jpg');
+    background-size: cover;
+    background-position: center;
+    z-index: -1; /* Ensure it is behind all content */
+}
+
+/* Title box styles */
+#page1 .title-box {
+    position: relative;
+    background-color: white;
+    border: 2px solid black;
+    padding: 40px;
+    text-align: center;
+    max-width: 90%;
+    width: auto;
+    z-index: 2;
+    opacity: 0; /* Initial hidden */
+    transition: opacity 0.3s;
+}
+
+/* Title styles */
+.main-title {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    text-align: center;
+    font-size: 2.5rem;
+    position: relative;
+    z-index: 10;
+}
+
+.subtitle {
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    line-height: 1.2;
+    color: #333;
+    font-weight: 400;
+}
+
+/* Chart container styles */
+.chart-container {
+    width: 100%;
+    height: 70vh;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .title-box {
+        padding: 20px;
+    }
+    
+    .main-title {
+        font-size: 36px;
+    }
+    
+    .subtitle {
+        font-size: 24px;
+    }
+}
+
+/* Page 2 styles */
+#page2 {
+    background: linear-gradient(to right, #ffffff, #f8f9fa);
+    position: relative;
+    overflow: hidden;
+}
+
+.intro-container {
+    display: flex;
+    width: 100%;
+    max-width: 1600px;
+    gap: 80px;
+    align-items: center;
+    padding: 0 80px;
+    position: relative;
+}
+
+.intro-image-container {
+    flex: 1;
+    position: relative;
+    transform: translateX(-100px);
+    opacity: 0;
+    transition: all 1s ease-out;
+}
+
+.intro-text-container {
+    flex: 1;
+    transform: translateX(100px);
+    opacity: 0;
+    transition: all 1s ease-out;
+}
+
+.intro-image {
+    width: 100%;
+    height: auto;
+    border-radius: 20px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease;
+}
+
+.intro-image:hover {
+    transform: scale(1.02);
+}
+
+.intro-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 42px;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.intro-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: #3498db;
+    transition: width 0.3s ease;
+}
+
+.intro-title:hover::after {
+    width: 100px;
+}
+
+.intro-text {
+    font-family: 'Lora', serif;
+    font-size: 20px;
+    line-height: 1.8;
+    color: #34495e;
+    position: relative;
+    padding-left: 20px;
+    border-left: 3px solid #e74c3c;
+    margin-bottom: 20px;
+}
+
+/* Animation classes */
+.slide-in {
+    opacity: 1 !important;
+    transform: translateX(0) !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+    .intro-container {
+        flex-direction: column;
+        padding: 0 40px;
+        gap: 40px;
+    }
+
+    .intro-image-container,
+    .intro-text-container {
+        transform: translateY(50px);
+    }
+
+    .intro-image {
+        max-width: 100%;
+    }
+
+    .intro-title {
+        font-size: 32px;
+    }
+
+    .intro-text {
+        font-size: 18px;
+    }
+}
+
+.topic-title {
+    font-size: 3.5rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.text-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.large-text {
+    font-size: 2rem;
+    line-height: 1.4;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.medium-text {
+    font-size: 1.5rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: #666;
+}
+
+.text-content p {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.text-content p.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.page-nav li {
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.page-nav li.active {
+    background: #000;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0) rotate(45deg);
+    }
+    40% {
+        transform: translateY(-10px) rotate(45deg);
+    }
+    60% {
+        transform: translateY(-5px) rotate(45deg);
+    }
+}
+
+.main-title {
+    font-size: 64px;
+    line-height: 1.2;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.subtitle {
+    font-size: 48px;
+    line-height: 1.2;
+    color: #333;
+}
+
+.page-dots {
+    position: fixed;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    z-index: 3;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #ccc;
+    cursor: pointer;
+}
+
+.dot.active {
+    background-color: #333;
+}
+
+#page3.white-background {
+    background-color: white;
+}
+
+#page3 .content-wrapper {
+    width: 100%;
+    height: 100%;
+    max-width: 1600px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    padding: 0 80px;
+    position: relative;
+    background: #ffffff;  
+}
+
+.question-image-container {
+    width: 85%;
+    max-width: 1000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: white;
+    padding: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    border: 3px solid black;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.question-image {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+    object-fit: contain;
+    transition: all 0.5s ease;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+}
+
+#page3.white-background .question-image-container {
+    width: 45%;
+    left: 6%;
+    transform: translateX(0);
+}
+
+.question-text-container {
+    opacity: 0;
+    position: absolute;
+    right: 5%;
+    width: 40%;
+    padding: 0 20px;
+    display: block;
+    transform: translateX(100px);
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#page3.white-background .question-text-container {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.question-text-container h2 {
+    color: #2c3e50;
+    font-size: 42px;
+    margin-bottom: 30px;
+    margin-left: -25px;
+    font-weight: bold;
+    line-height: 1.2;
+}
+
+.question-text-container p {
+    color: #34495e;
+    font-size: 20px;
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-weight: 400;
+}
+
+/* Add animation class */
+.question-image-container.animate {
+    animation: containerReveal 1s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.question-image.animate {
+    animation: imageReveal 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
+}
+
+@keyframes containerReveal {
+    0% {
+        opacity: 0;
+        transform: scale(0.95) translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes imageReveal {
+    0% {
+        opacity: 0;
+        transform: scale(0.98);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#bar-chart-container {
+    max-height: 400px; /* Set a maximum height for the bar chart */
+    overflow-y: auto; /* Allow vertical scrolling if content exceeds max height */
+    margin: 10px; /* Add some margin for spacing */
+}
+
+#page4 .content-wrapper {
+    position: relative;
+    height: 100vh;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+#page4 .main-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    color: #333;
+    text-align: center;
+    margin: 0;  /* 移除所有边距 */
+    padding: 0;
+    position: relative;
+    z-index: 10;
+    margin-top: -20px;  /* 添加负边距使标题往上移 */
+}
+
+/* Map and charts grid layout */
+#page4 .map-charts-grid {
+    display: flex;
+    width: 100%;
+    height: calc(100vh - 40px);  /* 进一步减少高度 */
+    gap: 20px;
+    margin-top: -40px;  /* 增加负边距使内容更往上移 */
+}
+
+/* Left side - World Map */
+.page4-left {
+    flex: 2;
+    position: relative;
+    margin-top: -10px;  /* 地图容器也往上移 */
+}
+
+/* Right side - Charts */
+.right-charts {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;  /* 进一步减少图表间距 */
+    margin-top: -10px;  /* 图表容器也往上移 */
+}
+
+#radar-chart-container, #bar-chart-container {
+    flex: 1;
+    position: relative;
+    min-height: 230px;  /* 稍微减少最小高度 */
+    margin: 0;
+}
+
+/* Canvas styles */
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#page6 .content-wrapper {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: white; 
+    box-shadow: none; 
+    border-radius: 0; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#scatterplot-chart {
+    width: 100%;
+    height: 90vh;  /* 给图表足够的高度 */
+    position: relative;
+}
+
+/* 确保散点图的 SVG 元素可见 */
+#scatterplot-chart svg {
+    width: 100%;
+    height: 100%;
+}
+
+.page {
+    min-width: 1000px;  /* Ensure minimum width to fit all ovals */
+}
+
+#page7 {
+    position: relative;
+    background-color: rgba(255, 255, 255, 0.8); 
+}
+
+#page7 .content-wrapper {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 20px;
+    background-color: transparent; 
+    box-shadow: none; 
+    border-radius: 0; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border: none; 
+}
+
+.score-selector {
+    cursor: move;
+}
+
+.score-selector[draggable="false"] {
+    cursor: default;
+}
+
+.axis-selector {
+    pointer-events: none;
+}
+
+.x-axis line,
+.y-axis line {
+    stroke: #000000;
+}
+
+.x-axis path,
+.y-axis path {
+    stroke: #666;
+}
+
+.x-axis text,
+.y-axis text {
+    font-size: 12px;
+}
+
+.question-text-container::before {
+    content: '';
+    position: absolute;
+    top: 70px;
+    left: 0px;
+    width: 60px;
+    height: 3px;
+    background: #3498db;
+}
+
+.question-text-container::after {
+    content: '';
+    position: absolute;
+    top: 90px;
+    left: 0px;
+    width: 3px;
+    height: 300px;
+    line-height: 1.8;
+    border-left: 3px solid #e74c3c;
+}
+
+#page5-5 {
+    background-color: white;
+}
+
+#worldmap-chart {
+    width: 100%; /* Set to 100% of the parent container */
+    height: 80vh; /* Set a larger height for the world map */
+    position: relative;
+    overflow: hidden;
+    margin: 0; /* Remove margin to reduce white space */
+}
+
+/* Global styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
     padding: 2rem;
 }
 
@@ -159,7 +981,7 @@ html, body {
     overflow-y: auto;
     scroll-snap-type: y mandatory;
     position: relative;
-    opacity: 0; /* 初始隐藏 */
+    opacity: 0; /* Initial hidden */
     transition: opacity 0.3s;
 }
 
@@ -240,28 +1062,6 @@ html, body {
     background-color: rgba(255, 255, 255, 0.7);
 }
 
-/* 当第一个导航点处于活跃状态时，当前活跃的导航点显示为纯白色 */
-.page-nav li.active {
-    background-color: rgba(0, 0, 0, 0.7);
-}
-
-.page-nav li:first-child.active,
-.page-nav li:first-child.active ~ li.active {
-    background-color: white;
-}
-
-/* First page specific styles */
-#page1 {
-    position: relative;
-    height: 100vh;
-    width: 100%;
-    scroll-snap-align: start;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
 /* Background image styles */
 .parallax-wrapper {
     position: absolute;
@@ -293,26 +1093,45 @@ html, body {
     max-width: 90%;
     width: auto;
     z-index: 2;
-    opacity: 0; /* 初始隐藏 */
+    opacity: 0; /* Initial hidden */
     transition: opacity 0.3s;
 }
 
 /* Title styles */
 .main-title {
     font-family: 'Playfair Display', serif;
-    font-size: 64px;
-    line-height: 1.2;
-    margin-bottom: 10px;
     color: #333;
-    font-weight: 700;
+    text-align: center;
+    font-size: 2.5rem;
+    position: relative;
+    z-index: 10;
 }
 
-.subtitle {
+/* Specific styles for page4 title */
+#page4 .content-wrapper {
+    position: relative;
+    height: 100vh;
+    padding: 0 20px;
+}
+
+#page4 .main-title {
     font-family: 'Playfair Display', serif;
-    font-size: 48px;
-    line-height: 1.2;
+    font-size: 2.5rem;
     color: #333;
-    font-weight: 400;
+    text-align: center;
+    margin: 0;  /* 移除所有边距 */
+    padding: 0;
+    position: relative;
+    z-index: 10;
+    margin-top: -20px;  /* 添加负边距使标题往上移 */
+}
+
+/* Adjust the map-charts-grid to fit with the title */
+#page4 .map-charts-grid {
+    padding-top: 20px;  /* 减少顶部间距 */
+    height: calc(100vh - 100px);
+    display: flex;
+    gap: 20px;
 }
 
 /* Chart container styles */
@@ -382,7 +1201,6 @@ html, body {
     transform: translateY(0);
 }
 
-
 .page-nav li {
     background: rgba(0, 0, 0, 0.3);
 }
@@ -390,7 +1208,6 @@ html, body {
 .page-nav li.active {
     background: #000;
 }
-
 
 @keyframes bounce {
     0%, 20%, 50%, 80%, 100% {
@@ -417,7 +1234,6 @@ html, body {
     color: #333;
 }
 
-
 .page-dots {
     position: fixed;
     right: 30px;
@@ -441,7 +1257,6 @@ html, body {
     background-color: #333;
 }
 
-
 h1, h2, h3, h4, h5, h6 {
     font-family: 'Playfair Display', serif;
 }
@@ -462,52 +1277,147 @@ h1, h2, h3, h4, h5, h6 {
     display: block; 
 }
 
-/* Keep the last page unchanged */
-#page7 .content-wrapper {
-    /* Add any specific styles for the last page here if needed */
+.page4-container {
+    display: flex;
+    justify-content: space-between; /* Ensures left and right sections */
+    align-items: flex-start;
+    width: 100%;
+    height: 100vh;
+    padding: 20px;
 }
 
-#page4 .content-wrapper {
+/* Adjust the left panel styles */
+.page4-left {
+    flex: 0 0 50%; /* Set a fixed width for the world map (50% of the container) */
+    min-width: 800px; /* Set a minimum width for the world map */
+    height: 100%; /* Ensure it takes the full height of the section */
+}
+
+/* Adjust the right charts container */
+.page4-right {
+    flex: 1; /* Allow the right charts to take up the remaining space */
+    display: flex;
+    flex-direction: column; /* Stack radar and bar charts vertically */
+    align-items: center; /* Center align the charts */
+}
+
+#radar-chart-container, #bar-chart-container {
+    flex: 1;
+    margin: 10px;
+}
+
+canvas {
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: white; 
-    box-shadow: none; 
-    border-radius: 0; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    position: relative;
 }
 
 #page5 .content-wrapper {
     width: 100%;
-    height: 100%;
+    height: 100vh;
     margin: 0;
-    padding: 0;
-    background-color: white; 
-    box-shadow: none; 
-    border-radius: 0; 
+    padding: 20px;
+    background-color: white;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-#page6 .content-wrapper {
+#page5 .chart-wrapper {
     width: 100%;
     height: 100%;
     margin: 0;
-    padding: 0;
-    background-color: white; 
-    box-shadow: none; 
-    border-radius: 0; 
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.line-chart-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    background-color: white;
+    display: flex;
+}
+
+#line-chart {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.chart-container {
+    width: 100%;
+    height: 100%;
+    position: relative;
+}
+
+.chart-container svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Line chart specific styles */
+.line {
+    fill: none;
+    stroke-width: 2;
+    transition: stroke-width 0.2s ease, opacity 0.2s ease;
+}
+
+.line:hover {
+    stroke-width: 4;
+}
+
+/* Legend styles */
+.legend {
+    font-size: 12px;
+}
+
+.legend text {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    dominant-baseline: middle;
+    text-anchor: start;
+}
+
+/* University info panel */
+.university-info {
+    background: white;
+    border-left: 1px solid #eee;
+    padding: 20px;
+    overflow-y: auto;
+    font-family: 'Lora', serif;
+    height: 100%;
+}
+
+.university-info h2 {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.university-info table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.university-info th,
+.university-info td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.university-info th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.university-info tr:hover {
+    background-color: #f8f9fa;
 }
 
 #page7 {
@@ -559,11 +1469,11 @@ h1, h2, h3, h4, h5, h6 {
 
 /* World Map Visualization Styles */
 #worldmap-chart {
-    width: 100%;
-    height: 80vh;
+    width: 100%; /* Set to 100% of the parent container */
+    height: 80vh; /* Set a larger height for the world map */
     position: relative;
     overflow: hidden;
-    margin: 0 auto;
+    margin: 0; /* Remove margin to reduce white space */
 }
 
 /* Adjust the title for the worldmap page */
@@ -719,4 +1629,392 @@ h1, h2, h3, h4, h5, h6 {
     top: 0;
     height: 100%;
     transition: width 0.5s ease;
+}
+
+/* Add this to your CSS file */
+.map-charts-grid {
+    display: flex; /* Use flexbox for layout */
+}
+
+.right-charts {
+    flex: 1; /* Allow the right charts to take up available space */
+    display: flex;
+    flex-direction: column; /* Stack radar and bar charts vertically */
+}
+
+#bar-chart-canvas {
+    width: 100%; /* Ensure the canvas takes the full width of the container */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* World Map and Charts Grid Layout */
+.map-charts-grid {
+    display: flex;
+    width: 100%;
+    height: 80vh;
+    gap: 20px;
+}
+
+.page4-left {
+    flex: 2;
+    position: relative;
+}
+
+.right-charts {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#radar-chart-container, #bar-chart-container {
+    flex: 1;
+    position: relative;
+    min-height: 300px;
+    margin: 10px;
+}
+
+#bar-chart-container {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+#worldmap-chart {
+    width: 100%;
+    height: 80vh;
+    position: relative;
+    overflow: hidden;
+    margin: 0;
+}
+
+/* World Map Tooltip and Legend */
+#worldmap-tooltip {
+    position: absolute;
+    background: rgba(240, 240, 240, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 15px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    max-width: 300px;
+    font-size: 14px;
+    color: #333;
+}
+
+#worldmap-tooltip h3 {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+
+#worldmap-tooltip p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+#worldmap-legend {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.8);
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ddd;
+    z-index: 100;
+}
+
+/* Globe Interaction Styles */
+.globe-group {
+    cursor: grab;
+    z-index: 5;
+}
+
+.country {
+    cursor: pointer;
+    transition: stroke 0.2s, stroke-width 0.2s;
+}
+
+.graticule {
+    pointer-events: none;
+}
+
+.ocean {
+    cursor: grab;
+    pointer-events: all;
+}
+
+/* Left Panel Styles */
+.left-panel {
+    z-index: 10;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    position: fixed;
+    left: 30px !important;
+    top: 100px !important;
+    transform: none !important;
+    background-color: rgba(255, 255, 255, 0.95);
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    padding: 20px;
+    width: 30%;
+    max-width: 400px;
+    display: none;
+    opacity: 0;
+}
+
+.panel-title {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 24px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+
+/* Canvas Styles */
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+/* Scatterplot page styles */
+#page6 {
+    width: 100%;
+    height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background-color: white;
+}
+
+#page6 .content-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+#scatterplot-chart {
+    width: 100%;
+    height: 90vh;  /* 给图表足够的高度 */
+    position: relative;
+}
+
+/* 确保散点图的 SVG 元素可见 */
+#scatterplot-chart svg {
+    width: 100%;
+    height: 100%;
+}
+
+#timeline-chart {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.timeline-controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.timeline-controls select {
+    margin-right: 10px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.trend-line {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.trend-line.selected {
+    stroke-width: 4;
+    opacity: 1;
+}
+
+.university-info {
+    background: white;
+    border-left: 1px solid #eee;
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+.line-chart-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+#line-chart {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+}
+
+/* Remove timeline-specific styles */
+#timeline-chart {
+    display: none;
+}
+
+.line {
+    fill: none;
+    stroke-width: 2;
+    transition: stroke-width 0.2s ease, opacity 0.2s ease;
+}
+
+.line:hover {
+    stroke-width: 4;
+}
+
+.metric-selector {
+    position: absolute;
+    top: 10;
+    left: 460px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    font-family: 'Lora', serif;
+    z-index: 10;
+}
+
+.tooltip {
+    position: absolute;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    pointer-events: none;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-title, .x-axis-label, .y-axis-label {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+.x-axis text, .y-axis text {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+}
+
+.legend text {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    alignment-baseline: middle;
+}
+
+.university-info {
+    background: white;
+    border-left: 1px solid #eee;
+    padding: 0;
+    overflow-y: auto;
+    font-family: 'Lora', serif;
+}
+
+.university-info h2 {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.university-info h3 {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    margin: 20px 0 15px;
+}
+
+.university-info p {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.university-info table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.university-info th,
+.university-info td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.university-info th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.university-info tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Ensure the chart container takes full height */
+#page5 .content-wrapper {
+    padding: 0;
+    height: 100vh;
+}
+
+.chart-container {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+/* Style for the SVG container */
+.chart-container svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Ensure legend text is fully visible */
+.legend text {
+    font-size: 12px;
+    dominant-baseline: middle;
+    text-anchor: start;
+}
+
+/* 在 CSS 中添加 */
+.selectors-container {
+    left: 17% !important;
+    width: auto !important;
+    min-width: 20px;
+    display: flex !important;
+    justify-content: center;
+    top: 20px !important;
+}
+
+.selectors-container select {
+    flex-shrink: 0;
+}
+
+.selectors-container label {
+    white-space: nowrap;
 }

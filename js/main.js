@@ -3,7 +3,8 @@ const yearFormatter = d3.timeFormat("%Y");
 const yearParser = d3.timeParse("%Y");
 
 // Global visualization instances
-let worldMap, timeline, scatterplot;
+let worldMap, scatterplot, barChart, radarChart, lineChart;
+let scatterplotInitialized = false; // Flag to track scatterplot initialization
 
 // (1) Load data with promises
 let promises = [
@@ -12,8 +13,49 @@ let promises = [
 
 Promise.all(promises)
     .then(function (data) {
-        console.log("Raw data loaded:", data);
         createVis(data)
+        let rankingData = data[0];
+
+        // Log the entire data set to check for 2024 entries
+        console.log("Loaded ranking data:", rankingData);
+
+        rankingData = rankingData.map(d => ({
+            rank: +d.rank || 0,
+            name: d.name,
+            location: d.location,
+            year: +d.year || 0,
+            scores_overall: +d.scores_overall || 0,
+            scores_teaching: +d.scores_teaching || 0,
+            scores_international_outlook: +d.scores_international_outlook || 0,
+            scores_industry_income: +d.scores_industry_income || 0,
+            scores_research: +d.scores_research || 0,
+            scores_citations: +d.scores_citations || 0
+        }));
+
+        // Initialize visualization instances
+        worldMap = new WorldMap("worldmap-chart", rankingData);
+        barChart = new BarChart("bar-chart-canvas", rankingData);
+        radarChart = new RadarChart("radar-chart-canvas", rankingData);
+        lineChart = new LineChart("line-chart", rankingData);
+        
+        // Initialize scatterplot only if it hasn't been initialized
+        if (!scatterplotInitialized) {
+            scatterplot = new Scatterplot("scatterplot-chart", rankingData);
+            scatterplotInitialized = true;
+        }
+
+        // Add window resize event listener
+        window.addEventListener('resize', function() {
+            if (worldMap) worldMap.render();
+            if (scatterplot) scatterplot.render();
+            if (lineChart) lineChart.render();
+            if (barChart) barChart.updateChart();
+            if (radarChart) radarChart.updateChart();
+        });
+
+        // Initial updates
+        barChart.updateChart();
+        radarChart.updateChart();
     })
     .catch(function (err) {
         console.error("Error loading data:", err)
@@ -77,7 +119,6 @@ function createVis(data) {
 
     // (3) Create visualization instances
     worldMap = new WorldMap("worldmap-chart", rankingData);
-    timeline = new Timeline("timeline-chart", rankingData);
     scatterplot = new Scatterplot("scatterplot-chart", rankingData);
 
     // (4) Set up page navigation and intersection observer
@@ -125,6 +166,7 @@ function setupPageNavigation() {
      */
     function updateActiveDot() {
         navDots.forEach((dot, index) => {
+            dot.setAttribute('data-page', index);
             dot.classList.toggle('active', index === currentPage);
         });
     }
@@ -165,34 +207,70 @@ function setupPageNavigation() {
  */
 function setupIntersectionObserver() {
     const options = {
-        root: null,        // Use viewport as root
-        rootMargin: '0px', // No margin
-        threshold: 0.1     // Trigger when 10% visible
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.3
     };
 
-    // Create intersection observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                console.log("16. Page intersecting:", entry.target.id);
+            console.log(`Page ${entry.target.id} intersection:`, entry.isIntersecting);
+            
+            if (entry.target.id === 'page2') {
+                const imageContainer = document.querySelector('.intro-image-container');
+                const textContainer = document.querySelector('.intro-text-container');
                 
-                // Add class to page container when page 4 is active
-                const pageContainer = document.querySelector('.page-container');
-                if (entry.target.id === 'page4') {
-                    pageContainer.classList.add('page4-active');
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        imageContainer.classList.add('slide-in');
+                    }, 300);
+                    setTimeout(() => {
+                        textContainer.classList.add('slide-in');
+                    }, 600);
                 } else {
-                    pageContainer.classList.remove('page4-active');
+                    imageContainer.classList.remove('slide-in');
+                    textContainer.classList.remove('slide-in');
                 }
+            }
+            
+            if (entry.target.id === 'page3') {
+                const page3 = document.getElementById('page3');
+                const container = document.querySelector('.question-image-container');
+                const image = document.querySelector('.question-image');
                 
-                if (entry.target.id === 'page6' && scatterplot) {
-                    console.log("17. Triggering scatterplot render");
-                    scatterplot.render();
+                if (entry.isIntersecting) {
+                    // 确保元素立即可见
+                    container.style.opacity = '1';
+                    container.style.visibility = 'visible';
+                    image.style.opacity = '1';
+                    image.style.visibility = 'visible';
+                    image.style.display = 'block';
+                    
+                    // 1秒后触发白色背景变化
+                    setTimeout(() => {
+                        page3.classList.add('white-background');
+                    }, 1000);
+                } else {
+                    // 离开页面时只重置背景
+                    page3.classList.remove('white-background');
+                    // 不隐藏图片
+                }
+            }
+            
+            if (entry.target.id === 'page6') {
+                if (entry.isIntersecting) {
+                    console.log("Rendering scatterplot");
+                    if (scatterplot) {
+                        scatterplot.render();
+                    } else {
+                        console.error("Scatterplot instance not found");
+                    }
                 }
             }
         });
     }, options);
 
-    // Start observing all pages
+    // 确保观察所有页面
     document.querySelectorAll('.page').forEach(page => {
         observer.observe(page);
     });
@@ -209,6 +287,18 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('resize', () => {
     // Refresh visualizations if needed
     if (worldMap) worldMap.render();
-    if (timeline) timeline.render();
     if (scatterplot) scatterplot.render();
+    if (lineChart) lineChart.render();
+    if (barChart) barChart.updateChart();
+    if (radarChart) radarChart.updateChart();
+});
+
+// Add event listener for university selection
+document.addEventListener("universitySelected", (event) => {
+    console.log('Main: University selected:', event.detail); // Log the selected university data
+    if (event.detail && event.detail.scores_overall > 0) {
+        radarChart.updateChart(event.detail);
+    } else {
+        console.warn('Main: No valid university data provided for radar chart update.');
+    }
 });

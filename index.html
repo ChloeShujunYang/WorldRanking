@@ -22,34 +22,75 @@
             </div>
         </section>
 
-        <!-- Page 2: Content Page -->
+        <!-- Page 2: Introduction -->
         <section class="page" id="page2">
             <div class="content-wrapper">
-                <h1 class="main-title">Introduction</h1>
+                <div class="intro-container">
+                    <!-- Left side: Image -->
+                    <div class="intro-image-container">
+                        <img src="img/intro.pic.jpg" alt="Introduction" class="intro-image">
+                    </div>
+                    <!-- Right side: Text -->
+                    <div class="intro-text-container">
+                        <h2 class="intro-title">Background and Motivation</h2>
+                        <p class="intro-text">As a university student who is about to graduate, I have a mixed feeling of excitement and anxiety swirling inside me. On one hand, I'm thrilled to finally step into the next stage of my life—starting a career or moving on to further research. On the other hand, there's a nagging fear: Will my university's reputation and global ranking help me stand out in the job market or academic circles?</p>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Page 3: Content Page -->
+        <!-- Page 3: Research Questions -->
         <section class="page" id="page3">
             <div class="content-wrapper">
-                <h1 class="main-title">Introduction 2</h1>
+                <div class="question-image-container">
+                    <img src="img/question.jpg" alt="Research Questions" class="question-image">
+                </div>
+                <div class="question-text-container">
+                    <h2>What are we trying to do</h2>
+                    <p>By uncovering these insights, we aim to provide a deeper understanding of the evolving landscape of global higher education and the factors that drive institutional success. Our goal is to create a tool that helps stakeholders—such as students, educators, policymakers, and institutions—make informed decisions by visualizing trends, identifying areas of improvement, and fostering collaboration in the pursuit of academic excellence.</p>
+                </div>
             </div>
         </section>
 
-        <!-- Page 4: World Map -->
+        <!-- Page 4: World Map with Radar and Bar Chart -->
         <section class="page" id="page4">
             <div class="content-wrapper">
                 <h1 class="main-title">Global University Rankings</h1>
-                <div id="worldmap-chart"></div>
-                <div id="worldmap-tooltip" class="tooltip"></div>
-                <div id="worldmap-legend"></div>
+                <div class="map-charts-grid">
+                    <!-- Left: World Map -->
+                    <div id="worldmap-chart" class="page4-left"></div>
+                    <div id="worldmap-tooltip" class="tooltip"></div>
+                    <div id="worldmap-legend"></div>
+
+                    <!-- Right: Radar Chart (Top) and Bar Chart (Bottom) -->
+                    <div class="right-charts">
+                        <div id="radar-chart-container">
+                            <canvas id="radar-chart-canvas"></canvas>
+                        </div>
+                        <div id="bar-chart-container">
+                            <select id="rank-range-filter"></select>
+                            <canvas id="bar-chart-canvas"></canvas>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 
-        <!-- Page 5: Timeline -->
+        <!-- Page 5: Line Chart -->
         <section class="page" id="page5">
             <div class="content-wrapper">
-                <div id="timeline-chart"></div>
+                <div class="chart-wrapper">
+                    <div class="line-chart-container">
+                        <div id="line-chart"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page 5.5: Innovation View 1 -->
+        <section class="page" id="page5-5">
+            <div class="content-wrapper">
+                <img src="img/innovation1.pic.jpg" alt="Innovation View" style="width: 100%; height: 100vh; object-fit: contain;">
             </div>
         </section>
 
@@ -77,6 +118,7 @@
                 <li></li>
                 <li></li>
                 <li></li>
+                <li></li>
             </ul>
         </nav>
     </div>
@@ -85,9 +127,13 @@
     <script src="https://d3js.org/d3-geo.v2.min.js"></script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
     <script src="https://unpkg.com/topojson-client@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="js/worldmap.js"></script>
     <script src="js/timeline.js"></script>
     <script src="js/scatterplot.js"></script>
+    <script src="js/radar.js"></script>
+    <script src="js/barchart.js"></script>
+    <script src="js/linechart.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html> 
