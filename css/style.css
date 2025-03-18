@@ -1746,3 +1746,297 @@ canvas {
     width: 100%;
     height: 100%;
 }
+
+#timeline-chart {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+}
+
+.timeline-controls {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 10;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.timeline-controls select {
+    margin-right: 10px;
+    padding: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.trend-line {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.trend-line.selected {
+    stroke-width: 4;
+    opacity: 1;
+}
+
+.university-info {
+    background: white;
+    border-left: 1px solid #eee;
+    overflow: hidden;
+    transition: width 0.3s ease;
+}
+
+.line-chart-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+#line-chart {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+}
+
+/* Remove timeline-specific styles */
+#timeline-chart {
+    display: none;
+}
+
+.line {
+    fill: none;
+    stroke-width: 2;
+    transition: stroke-width 0.2s ease, opacity 0.2s ease;
+}
+
+.line:hover {
+    stroke-width: 4;
+}
+
+.metric-selector {
+    position: absolute;
+    top: 10;
+    left: 460px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+    font-family: 'Lora', serif;
+    z-index: 10;
+}
+
+.tooltip {
+    position: absolute;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    pointer-events: none;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.chart-title, .x-axis-label, .y-axis-label {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+}
+
+.x-axis text, .y-axis text {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+}
+
+.legend text {
+    font-family: 'Lora', serif;
+    font-size: 12px;
+    alignment-baseline: middle;
+}
+
+.university-info {
+    background: white;
+    border-left: 1px solid #eee;
+    padding: 0;
+    overflow-y: auto;
+    font-family: 'Lora', serif;
+}
+
+.university-info h2 {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.university-info h3 {
+    font-family: 'Playfair Display', serif;
+    color: #333;
+    margin: 20px 0 15px;
+}
+
+.university-info p {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+.university-info table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+.university-info th,
+.university-info td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.university-info th {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
+
+.university-info tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Ensure the chart container takes full height */
+#page5 .content-wrapper {
+    padding: 0;
+    height: 100vh;
+}
+
+.chart-container {
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+/* Style for the SVG container */
+.chart-container svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* Ensure legend text is fully visible */
+.legend text {
+    font-size: 12px;
+    dominant-baseline: middle;
+    text-anchor: start;
+}
+
+/* 在 CSS 中添加 */
+.selectors-container {
+    left: 17% !important;
+    width: auto !important;
+    min-width: 20px;
+    display: flex !important;
+    justify-content: center;
+    top: 20px !important;
+}
+
+.selectors-container select {
+    flex-shrink: 0;
+}
+
+.selectors-container label {
+    white-space: nowrap;
+}
+
+/* Add styles for the year selector */
+.year-selector-container {
+    font-family: 'Open Sans', sans-serif;
+    color: #333;
+}
+
+#year-selector {
+    font-family: 'Open Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#year-selector:hover {
+    border-color: #999;
+}
+
+#year-selector:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+/* Conclusion page styles - matching the uploaded image exactly with proper font weight */
+#page6\.5 {
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: serif; /* Using serif font to match the image */
+}
+
+#page6\.5 .content-wrapper {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.conclusion-container {
+    width: 80%;
+    max-width: 900px;
+    text-align: center;
+}
+
+.conclusion-title {
+    font-size: 48px;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: 600; /* Increased font weight to match image */
+    font-family: serif;
+    line-height: 1.2;
+}
+
+.conclusion-paragraph {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #333;
+    text-align: justify;
+    margin-bottom: 40px;
+    font-weight: 500; /* Increased font weight to match image */
+    font-family: serif;
+}
+
+.conclusion-question {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #333;
+    text-align: center;
+    margin-bottom: 40px;
+    font-weight: 500; /* Increased font weight to match image */
+    font-family: serif;
+}
+
+.conclusion-insight {
+    font-size: 20px;
+    line-height: 1.6;
+    color: #333;
+    text-align: center;
+    font-weight: 500; /* Increased font weight to match image */
+    font-family: serif;
+}
+
+.highlight-text {
+    color: #a50f15;
+    font-weight: 500; /* Increased font weight to match image */
+}

@@ -1,9 +1,10 @@
 // feel free to change any part of the code
 class Scatterplot {
     constructor(containerId, data) {
-        console.log("6. Scatterplot constructor called");
-        console.log("7. Container ID:", containerId);
-        console.log("8. Data received:", data?.length);
+        console.log("Scatterplot Debug: Constructor start");
+        console.log("Scatterplot Debug: Constructor called");
+        console.log("Scatterplot Debug: Container ID:", containerId);
+        console.log("Scatterplot Debug: Raw data length:", data?.length);
         
         this.containerId = containerId;
         // Remove entries with zero scores
@@ -15,432 +16,721 @@ class Scatterplot {
             d.scores_research > 0 && 
             d.scores_citations > 0
         );
+        console.log("Scatterplot Debug: Filtered data length:", this.data.length);
+        console.log("Scatterplot Debug: Sample data point:", this.data[0]);
         
-        // Get year range from data
+        // Define variables in priority order
+        this.variables = [
+            { name: 'scores_overall', label: 'Overall Score', priority: 0 },
+            { name: 'scores_research', label: 'Research Score', priority: 1 },
+            { name: 'scores_citations', label: 'Citation Score', priority: 2 },
+            { name: 'scores_industry_income', label: 'Industry Income Score', priority: 3 },
+            { name: 'scores_international_outlook', label: 'International Outlook Score', priority: 4 },
+            { name: 'scores_teaching', label: 'Teaching Score', priority: 5 }
+        ];
+        
+        // Get year range and set default year
         this.yearRange = {
             min: d3.min(this.data, d => d.year),
             max: d3.max(this.data, d => d.year)
         };
+        this.selectedYear = this.yearRange.max;
         
-        this.availableScores = [
-            'scores_overall',
-            'scores_teaching',
-            'scores_international_outlook',
-            'scores_industry_income',
-            'scores_research',
-            'scores_citations'
-        ];
+        // Default selected variables (Overall Score and Research Score)
+        this.selectedVariables = [this.variables[0], this.variables[1]];
         
-        // Default variables
-        this.currentX = 'scores_teaching';
-        this.currentY = 'scores_international_outlook';
+        console.log("Scatterplot Debug: Selected variables:", this.selectedVariables);
+        console.log("Scatterplot Debug: Year range:", this.yearRange);
         
-        // Track draggable state of each score
-        this.scoreStates = {};
-        this.availableScores.forEach(score => {
-            this.scoreStates[score] = {
-                isDraggable: ![this.currentX, this.currentY].includes(score),
-                position: null // Will store original position
-            };
+        // After setting selectedYear and selectedVariables
+        console.log("Scatterplot Debug: Initial state:", {
+            selectedYear: this.selectedYear,
+            selectedVariables: this.selectedVariables,
+            dataPoints: this.data.length,
+            yearRange: this.yearRange
         });
         
-        this.clearChart(); // Clear any existing content
-        this.initVis(); // Initialize visualization
-    }
-
-    clearChart() {
-        // Clear existing content in the scatterplot container
-        d3.select("#" + this.containerId).selectAll("*").remove();
+        this.initVis();
     }
 
     initVis() {
         const vis = this;
-        console.log("9. InitVis called");
+
+        // Clear any existing content
+        const containerElement = document.getElementById(vis.containerId);
+        containerElement.innerHTML = '';
         
-        // Calculate required width based on ovals
-        const ovalWidth = 160;
-        const ovalSpacing = 40;
-        const totalOvalWidth = (ovalWidth + ovalSpacing) * vis.availableScores.length;
-        
-        // Set up the SVG drawing area
-        const containerWidth = document.getElementById(vis.containerId).clientWidth;
-        const containerHeight = document.getElementById(vis.containerId).clientHeight;
-        
-        // Increase left margin to center the plot
-        vis.margin = {
-            top: 70,  // Increased to make room for title
-            right: 50,
-            bottom: 100,
-            left: 150  // Increased from 80 to 150
-        };
+        // Create main container with equal-width panels
+        const container = d3.select("#" + vis.containerId)
+            .style("display", "grid")
+            .style("grid-template-columns", "42% 58%") 
+            .style("width", "100%")
+            .style("height", "100vh")
+            .style("gap", "20px")
+            .style("padding", "20px");
 
-        // Calculate required width
-        vis.width = Math.max(containerWidth, totalOvalWidth + vis.margin.left + vis.margin.right);
-        vis.height = containerHeight;
-        
-        vis.innerWidth = vis.width - vis.margin.left - vis.margin.right;
-        vis.innerHeight = vis.height - vis.margin.top - vis.margin.bottom;
+        console.log("Scatterplot Debug: Main container created");
 
-        // Create SVG with calculated width
-        vis.svg = d3.select("#" + vis.containerId)
-        .append("svg")
-            .attr("width", vis.width)
-            .attr("height", vis.height);
+        // Left panel container (for hexagon and slider)
+        const leftPanel = container.append("div")
+            .style("display", "flex")
+            .style("flex-direction", "column")
+            .style("height", "100%")
+            .style("gap", "20px");
 
-        // Add container for plot
-        vis.g = vis.svg.append("g")
-            .attr("transform", `translate(${vis.margin.left},${vis.margin.top})`);
+        // Calculate heights for hexagon container (70% of its previous height)
+        const totalHeight = containerElement.clientHeight;
+        const hexagonHeight = Math.floor(totalHeight * 0.6); // 60% of 100%
+        const sliderHeight = 100; // Fixed height for slider
 
-        // Add title with more space for two lines
-        vis.title = vis.svg.append("text")
-            .attr("class", "plot-title")
-            .attr("x", vis.width / 2)
-            .attr("y", 25)  // Adjusted y position for two-line title
-            .attr("text-anchor", "middle")
-            .style("font-size", "18px")
-            .style("font-weight", "bold");
+        // Add single title for both metrics and year selection
+        leftPanel.append("h2")
+            .attr("class", "hexagon-title")
+            .style("opacity", "0")  // Start hidden
+            .text("Select Metrics and Year");
 
-        // Initialize scales
-        vis.x = d3.scaleLinear()
-            .domain([0, 100])
-            .range([0, vis.innerWidth]);
+        // Add hexagon container
+        vis.hexagonContainer = leftPanel.append("div")
+            .attr("class", "hexagon-container")
+            .style("height", `${hexagonHeight}px`)  // Set specific height
+            .style("display", "flex")
+            .style("justify-content", "center")
+            .style("align-items", "center");
 
-        vis.y = d3.scaleLinear()
-            .domain([0, 100])
-            .range([vis.innerHeight, 0]);
+        console.log("Scatterplot Debug: Hexagon container created");
 
-        // Create axis generators with major and minor ticks
-        vis.xAxis = d3.axisBottom(vis.x)
-            .tickValues(d3.range(0, 101, 20))
-            .tickSize(10);
+        // Remove the separate slider title and just add the slider container
+        vis.sliderContainer = leftPanel.append("div")
+            .attr("class", "slider-container")
+            .style("height", `${sliderHeight}px`)
+            .style("padding", "20px")
+            .style("display", "flex")
+            .style("flex-direction", "column")
+            .style("justify-content", "center");
 
-        vis.xAxisMinor = d3.axisBottom(vis.x)
-            .tickValues(d3.range(0, 101, 10))
-            .tickSize(5);
+        // Add new debug logs for slider title
+        console.log("Scatterplot Debug - Slider Container:", vis.sliderContainer);
+        console.log("Scatterplot Debug - Attempting to add slider title");
 
-        vis.yAxis = d3.axisLeft(vis.y)
-            .tickValues(d3.range(0, 101, 20))
-            .tickSize(10);
+        // Verify the title was added
+        console.log("Scatterplot Debug - Slider title elements:", vis.sliderContainer.selectAll(".slider-title").nodes());
 
-        vis.yAxisMinor = d3.axisLeft(vis.y)
-            .tickValues(d3.range(0, 101, 10))
-            .tickSize(5);
+        // Right panel for plot - now with centering
+        vis.plotContainer = container.append("div")
+            .attr("class", "plot-container")
+            .style("width", "100%")
+            .style("height", "100%")
+            .style("display", "flex")
+            .style("justify-content", "center")  // Center horizontally
+            .style("align-items", "center");     // Center vertically
 
-        // Add axes groups
-        vis.xAxisGroup = vis.g.append("g")
-            .attr("class", "x-axis")
-            .attr("transform", `translate(0,${vis.innerHeight})`);
+        console.log("Scatterplot Debug: Plot container created");
 
-        vis.yAxisGroup = vis.g.append("g")
-            .attr("class", "y-axis");
+        console.log("Scatterplot Debug: Container heights:", {
+            totalHeight: totalHeight,
+            hexagonHeight: hexagonHeight,
+            sliderHeight: sliderHeight
+        });
 
-        // Create drag behavior with proper binding
-        vis.drag = d3.drag()
-            .on("start", function(event, d) { vis.dragstarted.call(vis, event, d, this); })
-            .on("drag", function(event, d) { vis.dragged.call(vis, event, d, this); })
-            .on("end", function(event, d) { vis.dragended.call(vis, event, d, this); });
-
-        this.createVariableSelectors();
+        // Initialize components
+        this.initHexagonSelector();
+        this.initPlot();
+        this.initYearSlider();
         this.render();
+
+        // Debug final container states
+        console.log("Scatterplot Debug: Final container states:", {
+            leftPanel: {
+                element: leftPanel.node(),
+                dimensions: {
+                    clientWidth: leftPanel.node().clientWidth,
+                    clientHeight: leftPanel.node().clientHeight
+                }
+            },
+            hexagonContainer: {
+                element: vis.hexagonContainer.node(),
+                dimensions: {
+                    clientWidth: vis.hexagonContainer.node().clientWidth,
+                    clientHeight: vis.hexagonContainer.node().clientHeight
+                }
+            },
+            sliderContainer: {
+                element: vis.sliderContainer.node(),
+                dimensions: {
+                    clientWidth: vis.sliderContainer.node().clientWidth,
+                    clientHeight: vis.sliderContainer.node().clientHeight
+                }
+            },
+            plotContainer: {
+                element: vis.plotContainer.node(),
+                dimensions: {
+                    clientWidth: vis.plotContainer.node().clientWidth,
+                    clientHeight: vis.plotContainer.node().clientHeight
+                }
+            }
+        });
     }
 
-    createVariableSelectors() {
+    initHexagonSelector() {
         const vis = this;
+        console.log("Scatterplot Debug: Initializing hexagon selector");
         
-        const ovalWidth = 160;
-        const ovalHeight = 30;
-        const ovalSpacing = 40;
-        
-        // Calculate total width needed for all ovals
-        const totalWidth = (ovalWidth + ovalSpacing) * vis.availableScores.length - ovalSpacing;
-        // Calculate starting x position to center the ovals
-        const startX = (vis.width - totalWidth) / 2;
-        
-        // Create variable selection ovals below plot - moved lower
-        const selectionGroup = vis.svg.append("g")
-            .attr("transform", `translate(${startX},${vis.height - 20})`);  // Changed from -30 to -20
+        // Create SVG with adjusted dimensions
+        vis.hexagonSvg = vis.hexagonContainer.append("svg")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .attr("viewBox", "0 0 300 300")
+            .style("max-height", "100%")
+            .style("overflow", "visible");
 
-        // Store initial positions for each score
-        vis.availableScores.forEach((score, i) => {
-            vis.scoreStates[score].position = {
-                x: i * (ovalWidth + ovalSpacing),
-                y: 0
+        // Create separate groups for each layer
+        vis.linesGroup = vis.hexagonSvg.append("g").attr("class", "lines-group");
+        vis.circlesGroup = vis.hexagonSvg.append("g").attr("class", "circles-group");
+        vis.textGroup = vis.hexagonSvg.append("g").attr("class", "text-group");
+
+        // Calculate hexagon layout
+        const radius = 120;
+        const center = { x: 150, y: 150 };
+        const circleRadius = 40;  // Increased circle radius further
+        
+        // Calculate vertex positions (starting from top, clockwise)
+        vis.vertices = vis.variables.map((_, i) => {
+            const angle = (i * Math.PI / 3) - Math.PI / 2; // Start from top
+            return {
+                x: center.x + radius * Math.cos(angle),
+                y: center.y + radius * Math.sin(angle)
             };
         });
 
-        // Create draggable ovals
-        vis.scoreSelectors = selectionGroup.selectAll(".score-selector")
-            .data(vis.availableScores)
+        // Create lines between all vertices
+        vis.lines = [];
+        for (let i = 0; i < vis.vertices.length; i++) {
+            for (let j = i + 1; j < vis.vertices.length; j++) {
+                vis.lines.push({
+                    source: vis.vertices[i],
+                    target: vis.vertices[j],
+                    variables: [vis.variables[i], vis.variables[j]]
+                });
+            }
+        }
+
+        // Draw lines in the bottom layer
+        vis.linesGroup.selectAll(".variable-line")
+            .data(vis.lines)
+            .join("line")
+            .attr("class", "variable-line")
+            .attr("x1", d => d.source.x)
+            .attr("y1", d => d.source.y)
+            .attr("x2", d => d.target.x)
+            .attr("y2", d => d.target.y)
+            .style("stroke", "#cccccc")
+            .style("stroke-width", 5)
+            .style("opacity", 0.5)
+            .on("click", function(event, d) {
+                vis.selectVariables(d.variables);
+            });
+
+        // Define colors
+        vis.colors = {
+            circleFillDefault: "#add8e6",    // Light blue
+            circleFillHighlight: "#3498db",  // Darker blue
+            textDefault: "#4a4a4a",          // Dark grey
+            textHighlight: "#ffffff"         // White
+        };
+
+        // Draw circles in the middle layer
+        vis.circlesGroup.selectAll(".variable-circle")
+            .data(vis.vertices)
+            .join("circle")
+            .attr("class", "variable-circle")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", circleRadius)
+            .style("fill", vis.colors.circleFillDefault)
+            .style("stroke", "none")
+            .style("cursor", "pointer");
+
+        // Create text groups in the top layer
+        const textGroups = vis.textGroup.selectAll(".variable-text-group")
+            .data(vis.variables)
             .join("g")
-            .attr("class", "score-selector")
-            .attr("transform", (d) => `translate(${vis.scoreStates[d].position.x},${vis.scoreStates[d].position.y})`);
+            .attr("class", "variable-text-group")
+            .attr("transform", (d, i) => `translate(${vis.vertices[i].x},${vis.vertices[i].y})`);
 
-        // Add ovals and text
-        vis.updateScoreSelectors();
+        // Add labels
+        textGroups.each(function(d, i) {
+            const group = d3.select(this);
+            
+            const words = d.label
+                .replace(" Score", "")
+                .split(" ")
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1));
+            
+            const lineHeight = 1.2;
+            
+            words.forEach((word, j) => {
+                group.append("text")
+                    .attr("class", "variable-label")
+                    .attr("x", 0)
+                    .attr("y", (j - (words.length - 1)/2) * (lineHeight * 12))
+                    .attr("text-anchor", "middle")
+                    .attr("dominant-baseline", "middle")
+                    .style("font-size", "12px")
+                    .style("fill", vis.colors.textDefault)
+                    .style("pointer-events", "none")
+                    .text(word);
+            });
+        });
 
-        // Create axis variable indicators
-        // X-axis selector - moved lower
-        vis.xSelector = vis.svg.append("g")
-            .attr("class", "axis-selector x")
-            .attr("transform", `translate(${vis.margin.left + vis.innerWidth/2},${vis.height - 60})`);  // Changed from -70 to -60
+        // Add tooltip div if it doesn't exist
+        vis.tooltip = d3.select("body").append("div")
+            .attr("class", "hexagon-tooltip")
+            .style("opacity", 0);
 
-        vis.xSelector.append("ellipse")
-            .attr("rx", ovalWidth/2)  // Wider oval
-            .attr("ry", ovalHeight/2)
-            .attr("fill", "#ffffff")
-            .attr("stroke", "#666");
+        // Updated format metric name function
+        function formatMetricName(name) {
+            return name
+                .replace('scores_', '')  // Remove 'scores_' prefix
+                .replace('score_', '')   // Remove 'score_' prefix
+                .split('_')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ') + ' Score';  // Add 'Score' as suffix
+        }
 
-        vis.xSelector.append("text")
-            .attr("text-anchor", "middle")
-            .attr("dy", "0.3em")
-            .style("font-weight", "bold");
+        // Store metric data with both position and name
+        vis.metricData = vis.variables.map((metric, i) => ({
+            name: metric.name,
+            x: vis.vertices[i].x,
+            y: vis.vertices[i].y
+        }));
 
-        // Y-axis selector - keep same position
-        vis.ySelector = vis.svg.append("g")
-            .attr("class", "axis-selector y")
-            .attr("transform", `translate(${vis.margin.left - 60},${vis.margin.top + vis.innerHeight/2}) rotate(-90)`);
+        // Add metric descriptions
+        vis.metricDescriptions = {
+            'scores_overall': 'A comprehensive measurement of the overall performance and quality of the university.',
+            'scores_teaching': 'A comprehensive measurement of the learning environment of the university. Aspects considered include teaching reputation, staff-to-student ratio, attractiveness to graduates, teaching effectiveness, and institutional income.',
+            'scores_research': 'A comprehensive measurement of the research environment of the university. Aspects considered include research reputation, income, and productivity.',
+            'scores_citations': 'A comprehensive measurement of the research quality of the university. Aspects considered include research impact, strength, and excellence.',
+            'scores_international_outlook': 'A comprehensive measurement of the ability of a university to attract people from all over the world. Aspects considered include proportion of international staff and students, as well as international collaboration.',
+            'scores_industry_income': 'A comprehensive measurement of the ability of a university to help with industrial development. Aspects considered include how much research income it earns from industry and the extent to which businesses are willing to pay for its research.'
+        };
 
-        vis.ySelector.append("ellipse")
-            .attr("rx", ovalWidth/2)  // Wider oval
-            .attr("ry", ovalHeight/2)
-            .attr("fill", "#ffffff")
-            .attr("stroke", "#666");
+        // Update circle creation to use the new data structure
+        vis.circlesGroup.selectAll(".variable-circle")
+            .data(vis.metricData)  // Use the new data structure
+            .join("circle")
+            .attr("cx", d => d.x)
+            .attr("cy", d => d.y)
+            .attr("r", circleRadius)
+            .style("fill", vis.colors.circleFillDefault)
+            .style("stroke", "none")
+            .style("cursor", "pointer")
+            .on("mouseover", function(event, d) {
+                const formattedName = formatMetricName(d.name);
+                
+                vis.tooltip
+                    .style("opacity", 1)
+                    .html(`<div class="metric-name">${formattedName}</div>
+                          <div class="metric-description">${vis.metricDescriptions[d.name]}</div>`)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mousemove", function(event) {
+                vis.tooltip
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mouseout", function() {
+                vis.tooltip.style("opacity", 0);
+            });
 
-        vis.ySelector.append("text")
-            .attr("text-anchor", "middle")
-            .attr("dy", "0.3em")
-            .style("font-weight", "bold");
-
-        this.updateAxisSelectors();
+        this.updateHexagonSelection();
     }
 
-    updateScoreSelectors() {
+    initPlot() {
         const vis = this;
+        console.log("Scatterplot Debug: Starting initPlot");
         
-        vis.scoreSelectors.each(function(score) {
-            const selector = d3.select(this);
-            const isDraggable = vis.scoreStates[score].isDraggable;
-            
-            // Remove old elements
-            selector.selectAll("*").remove();
-            
-            // Update draggable state
-            if (isDraggable) {
-                selector.call(vis.drag);
-                selector.style("cursor", "move");
-            } else {
-                selector.on(".drag", null);
-                selector.style("cursor", "default");
+        // Define colors
+        vis.plotColors = {
+            darkGrey: "#4a4a4a"  // Dark grey color for text and axes
+        };
+
+        // Get container dimensions
+        const containerWidth = vis.plotContainer.node().clientWidth;
+        const containerHeight = vis.plotContainer.node().clientHeight;
+        
+        // Calculate size for square plot (use smaller dimension)
+        const size = Math.min(containerWidth, containerHeight) * 0.8; // 80% of smaller dimension
+        
+        // Update margins to move everything down
+        vis.margin = {
+            top: 100,  // Increased from 70 to 100 to move everything down 30 units
+            right: 40,
+            bottom: 50,
+            left: 125
+        };
+
+        // Set width and height to be equal
+        vis.width = size - vis.margin.left - vis.margin.right;
+        vis.height = vis.width; // Make it square
+
+        console.log("Scatterplot Debug: Plot dimensions:", {
+            containerWidth,
+            containerHeight,
+            plotSize: size,
+            width: vis.width,
+            height: vis.height
+        });
+
+        // Create SVG with square dimensions
+        vis.svg = vis.plotContainer.append("svg")
+            .attr("width", vis.width + vis.margin.left + vis.margin.right)
+            .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
+            .style("display", "block")  // Removes any extra space
+            .style("margin", "auto")    // Centers the SVG
+            .append("g")
+            .attr("transform", `translate(${vis.margin.left},${vis.margin.top})`);
+
+        console.log("Scatterplot Debug: SVG created");
+
+        // Initialize scales with placeholder domains (will be updated in render)
+        vis.x = d3.scaleLinear()
+            .range([0, vis.width]);
+        vis.y = d3.scaleLinear()
+            .range([vis.height, 0]);
+
+        // Initialize axes with larger font size
+        vis.xAxis = d3.axisBottom(vis.x)
+            .ticks(5)
+            .tickSize(10);
+
+        vis.yAxis = d3.axisLeft(vis.y)
+            .ticks(5)
+            .tickSize(10);
+
+        // Add axes groups with updated styling
+        vis.xAxisGroup = vis.svg.append("g")
+            .attr("class", "x-axis")
+            .attr("transform", `translate(0,${vis.height})`)
+            .style("font-size", "14px");  // Increased from default (usually 12px)
+        
+        vis.yAxisGroup = vis.svg.append("g")
+            .attr("class", "y-axis")
+            .style("font-size", "14px");  // Increased from default (usually 12px)
+
+        // Add axis labels with updated font size
+        vis.svg.append("text")
+            .attr("class", "x-axis-label")
+            .attr("x", vis.width / 2)
+            .attr("y", vis.height + 45)  // Increased from 35 to 45 to move label lower
+            .style("text-anchor", "middle")
+            .style("fill", "#4a4a4a")
+            .style("font-size", "18px")
+            .text("X-Axis Label");
+
+        vis.svg.append("text")
+            .attr("class", "y-axis-label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -vis.height / 2)
+            .attr("y", -45)
+            .style("text-anchor", "middle")
+            .style("fill", "#4a4a4a")
+            .style("font-size", "18px")  // Increased from default
+            .text("Y-Axis Label");
+
+        // Add title with updated positioning
+        vis.title = vis.svg.append("text")
+            .attr("class", "plot-title")
+            .attr("x", vis.width / 2)
+            .attr("y", -50)  // Changed from -20 to -50 to increase spacing between title and plot
+            .attr("text-anchor", "middle")
+            .style("fill", "#4a4a4a")
+            .style("font-weight", "bold");
+
+        // Add CSS styles for axis elements
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = `
+            .x-axis path,
+            .y-axis path,
+            .x-axis line,
+            .y-axis line {
+                stroke: ${vis.plotColors.darkGrey};
             }
             
-            // Add oval with wider width
-            selector.append("ellipse")
-                .attr("rx", 80)  // Doubled from 40
-                .attr("ry", 15)
-                .attr("fill", isDraggable ? "#dddddd" : "#ffffff")
-                .attr("stroke", "#666");
+            .x-axis text,
+            .y-axis text {
+                fill: ${vis.plotColors.darkGrey};
+            }
+        `;
+        document.head.appendChild(styleSheet);
 
-            // Add text
-            selector.append("text")
-                .attr("text-anchor", "middle")
-                .attr("dy", "0.3em")
-                .style("font-weight", isDraggable ? "normal" : "bold")
-                .text(score.replace("scores_", ""));
+        console.log("Scatterplot Debug: Plot initialized");
+
+        // Update circle radius
+        vis.circleRadius = 6;  // Increased from default size (likely 3 or 4)
+    }
+
+    initYearSlider() {
+        const vis = this;
+        console.log("Scatterplot Debug: Initializing year slider");
+
+        // Clear existing content
+        vis.sliderContainer.selectAll("*").remove();
+
+        // Create slider
+        vis.slider = vis.sliderContainer.append("input")
+            .attr("type", "range")
+            .attr("min", vis.yearRange.min)
+            .attr("max", vis.yearRange.max)
+            .attr("value", vis.selectedYear)
+            .attr("step", 1)
+            .style("width", "100%")
+            .style("margin", "10px 0")
+            .on("input", function() {
+                vis.selectedYear = +this.value;
+                console.log("Scatterplot Debug: Year changed to:", vis.selectedYear);
+                vis.updateTitle();
+                vis.render();
+            });
+
+        // Add year labels
+        const labelContainer = vis.sliderContainer.append("div")
+            .style("display", "flex")
+            .style("justify-content", "space-between")  // Changed from space-between to space-around
+            .style("width", "100%")                     // Slightly reduced width to prevent labels from touching edges
+            .style("margin", "0 auto")                 // Center the container
+            .style("padding", "0 0px");
+
+        // Add year markers
+        d3.range(vis.yearRange.min, vis.yearRange.max + 1).forEach(year => {
+            labelContainer.append("span")
+                .style("font-size", "14px") 
+                .style("color", "#666")
+                .text(year);
+        });
+
+        console.log("Scatterplot Debug: Slider elements created:", {
+            slider: vis.slider.node(),
+            labelContainer: labelContainer.node()
         });
     }
 
-    updateAxisSelectors() {
+    selectVariables(variables) {
+        const vis = this;
+        const sorted = variables.sort((a, b) => a.priority - b.priority);
+        this.selectedVariables = sorted;
+        
+        // Update hexagon selection
+        this.updateHexagonSelection();
+        
+        // Render with transitions
+        this.render();
+    }
+
+    updateHexagonSelection() {
         const vis = this;
         
-        // Update x-axis selector
-        vis.xSelector.select("text")
-            .text(vis.currentX.replace("scores_", ""))
-            .style("font-weight", "bold");
-            
-        // Update y-axis selector
-        vis.ySelector.select("text")
-            .text(vis.currentY.replace("scores_", ""))
-            .style("font-weight", "bold");
-    }
+        // Reset all lines
+        vis.linesGroup.selectAll(".variable-line")
+            .style("stroke", "#cccccc")
+            .style("stroke-width", 5)
+            .style("opacity", 0.5);
 
-    dragstarted(event, d, element) {
-        if (!this.scoreStates[d].isDraggable) return;
+        // Reset all circles and text
+        vis.circlesGroup.selectAll(".variable-circle")
+            .style("fill", vis.colors.circleFillDefault)
+            .style("stroke", "none");
+
+        vis.textGroup.selectAll(".variable-label")
+            .style("fill", vis.colors.textDefault);
+
+        // Highlight selected line and move to front within lines group
+        const selectedLine = vis.linesGroup.selectAll(".variable-line")
+            .filter(d => 
+                (d.variables[0] === vis.selectedVariables[0] && d.variables[1] === vis.selectedVariables[1]) ||
+                (d.variables[0] === vis.selectedVariables[1] && d.variables[1] === vis.selectedVariables[0])
+            );
         
-        d3.select(element)
-            .raise()
-            .select("ellipse")
-            .attr("stroke", "#000")
-            .attr("stroke-width", 2);
+        selectedLine
+            .style("stroke", "#3498db")
+            .style("stroke-width", 7)
+            .style("opacity", 1)
+            .each(function() {
+                // Move to front within the lines group only
+                this.parentNode.appendChild(this);
+            });
+
+        // Highlight selected circles and their text
+        const selectedIndices = vis.variables.map((v, i) => 
+            (v === vis.selectedVariables[0] || v === vis.selectedVariables[1]) ? i : -1
+        ).filter(i => i !== -1);
+
+        // Update selected circles
+        vis.circlesGroup.selectAll(".variable-circle")
+            .filter((d, i) => selectedIndices.includes(i))
+            .style("fill", vis.colors.circleFillHighlight)
+            .style("stroke", "none");
+
+        // Update text color for selected circles
+        vis.textGroup.selectAll(".variable-text-group")
+            .each(function(d, i) {
+                if (selectedIndices.includes(i)) {
+                    d3.select(this).selectAll(".variable-label")
+                        .style("fill", vis.colors.textHighlight);
+                }
+            });
     }
 
-    dragged(event, d, element) {
-        if (!this.scoreStates[d].isDraggable) return;
-        
-        d3.select(element)
-            .attr("transform", `translate(${event.x},${event.y})`);
-    }
-
-    dragended(event, d, element) {
+    updateTitle() {
         const vis = this;
-        if (!this.scoreStates[d].isDraggable) return;
-        
-        // Reset stroke
-        d3.select(element)
-            .select("ellipse")
-            .attr("stroke", "#666")
-            .attr("stroke-width", 1);
-        
-        const draggedScore = d;
-        
-        // Get the current mouse position relative to the SVG
-        const mouseX = event.sourceEvent.clientX;
-        const mouseY = event.sourceEvent.clientY;
-        
-        // Get the axis oval positions
-        const xAxisOval = vis.xSelector.node().getBoundingClientRect();
-        const yAxisOval = vis.ySelector.node().getBoundingClientRect();
-        
-        let replaced = false;
-        
-        // Check if mouse is over x-axis oval on release
-        if (mouseX >= xAxisOval.left && mouseX <= xAxisOval.right &&
-            mouseY >= xAxisOval.top && mouseY <= xAxisOval.bottom) {
-            // Update variables
-            const oldX = vis.currentX;
-            vis.currentX = draggedScore;
-            
-            // Update draggable states
-            vis.scoreStates[oldX].isDraggable = true;
-            vis.scoreStates[draggedScore].isDraggable = false;
-            
-            replaced = true;
-        }
-        // Check if mouse is over y-axis oval on release
-        else if (mouseX >= yAxisOval.left && mouseX <= yAxisOval.right &&
-                 mouseY >= yAxisOval.top && mouseY <= yAxisOval.bottom) {
-            // Update variables
-            const oldY = vis.currentY;
-            vis.currentY = draggedScore;
-            
-            // Update draggable states
-            vis.scoreStates[oldY].isDraggable = true;
-            vis.scoreStates[draggedScore].isDraggable = false;
-            
-            replaced = true;
-        }
-
-        if (replaced) {
-            // Update visualizations
-            vis.updateScoreSelectors();
-            vis.updateAxisSelectors();
-            vis.updateTitle();  // Update title when variables change
-            vis.renderTransition();
-        }
-        
-        // Return to original position
-        d3.select(element)
+        vis.title
             .transition()
-            .duration(200)
-            .attr("transform", `translate(${vis.scoreStates[d].position.x},${vis.scoreStates[d].position.y})`);
+            .duration(1000)
+            .text(`${vis.selectedVariables[1].label} vs. ${vis.selectedVariables[0].label} (${vis.selectedYear})`);
     }
 
-    renderTransition() {
+    render() {
         const vis = this;
+        console.log("Scatterplot Debug: Starting render");
+
+        // Calculate domains for both axes
+        const xDomain = vis.calculateAxisDomain(vis.selectedVariables[1].name);
+        const yDomain = vis.calculateAxisDomain(vis.selectedVariables[0].name);
+
+        // Update scales with new domains
+        vis.x.domain(xDomain);
+        vis.y.domain(yDomain);
         
-        // Update points with transition
-        const points = vis.g.selectAll(".point")
-            .data(vis.data);
-            
+        // Update axes with transition
+        vis.xAxisGroup
+            .transition()
+            .duration(1000)
+            .call(vis.xAxis);
+        
+        vis.yAxisGroup
+            .transition()
+            .duration(1000)
+            .call(vis.yAxis);
+
+        // Filter data for selected year
+        const yearData = vis.data.filter(d => d.year === vis.selectedYear);
+
+        // Update points with transitions
+        const points = vis.svg.selectAll(".point")
+            .data(yearData);
+        
         // Exit
-        points.exit().remove();
+        points.exit()
+            .transition()
+            .duration(1000)
+            .attr("r", 0)
+            .remove();
         
         // Enter
         const pointsEnter = points.enter()
             .append("circle")
             .attr("class", "point")
-            .attr("r", 5)
+            .attr("r", vis.circleRadius)
             .attr("fill", "#3498db")
             .attr("opacity", 0.6);
-            
+        
         // Update + Enter
         points.merge(pointsEnter)
             .transition()
-            .duration(750)
-            .attr("cx", d => vis.x(d[vis.currentX]))
-            .attr("cy", d => vis.y(d[vis.currentY]));
-    }
+            .duration(1000)
+            .attr("cx", d => vis.x(d[vis.selectedVariables[1].name]))
+            .attr("cy", d => vis.y(d[vis.selectedVariables[0].name]))
+            .attr("r", vis.circleRadius);
 
-    updateTitle() {
-        const vis = this;
+        // Update axis labels with transition
+        vis.svg.select(".x-axis-label")
+            .transition()
+            .duration(1000)
+            .text(vis.selectedVariables[1].label);
         
-        // Format variable names for title
-        const formatText = (text) => {
-            return text.split("_")
-                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(" ");
-        };
-
-        const xVar = formatText(vis.currentX.replace("scores_", ""));
-        const yVar = formatText(vis.currentY.replace("scores_", ""));
-        
-        // Create multi-line title
-        vis.title
-            .selectAll("tspan").remove();  // Clear existing title
-            
-        vis.title
-            .append("tspan")
-            .text(`Scatter Plot of ${xVar} Score vs. ${yVar} Score`)
-            .attr("x", vis.width / 2)
-            .attr("dy", 0);
-            
-        vis.title
-            .append("tspan")
-            .text(`of Universities Around the World From ${vis.yearRange.min} to ${vis.yearRange.max}`)
-            .attr("x", vis.width / 2)
-            .attr("dy", "1.2em");
-    }
-
-    render() {
-        const vis = this;
+        vis.svg.select(".y-axis-label")
+            .transition()
+            .duration(1000)
+            .text(vis.selectedVariables[0].label);
 
         // Update title
         vis.updateTitle();
+    }
 
-        // Clear existing content
-        vis.g.selectAll(".point").remove();
-
-        // Update axes
-        vis.xAxisGroup.call(vis.xAxis);
-        vis.xAxisGroup.call(vis.xAxisMinor);
-        vis.yAxisGroup.call(vis.yAxis);
-        vis.yAxisGroup.call(vis.yAxisMinor);
-
-        // Draw points
-        vis.g.selectAll(".point")
-            .data(vis.data)
-            .join("circle")
-            .attr("class", "point")
-            .attr("cx", d => vis.x(d[vis.currentX]))
-            .attr("cy", d => vis.y(d[vis.currentY]))
-            .attr("r", 5)
-            .attr("fill", "#3498db")
-            .attr("opacity", 0.6);
+    // Add method to calculate axis domain
+    calculateAxisDomain(metric) {
+        const vis = this;
         
-        // Debug point positions
-        const samplePoint = vis.data[0];
-        console.log("Sample point coordinates:", {
-            x: vis.x(samplePoint[vis.currentX]),
-            y: vis.y(samplePoint[vis.currentY]),
-            rawX: samplePoint[vis.currentX],
-            rawY: samplePoint[vis.currentY]
-        });
+        // Get minimum value for this metric across all years
+        const minValue = d3.min(vis.data, d => d[metric]);
         
-        // Debug SVG existence
-        console.log("SVG dimensions after render:", {
-            width: vis.svg.attr("width"),
-            height: vis.svg.attr("height")
-        });
+        // Find largest multiple of 10 less than minValue
+        const minDomain = Math.floor(minValue / 10) * 10;
         
-        console.log("scatterplot rendered");
+        return [minDomain, 100];
     }
 }
+
+// Add these styles to ensure proper layout and slider appearance
+const styles = `
+    #${vis.containerId} {
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+    }
+
+    .slider-container input[type="range"] {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 8px;
+        border-radius: 4px;
+        background: #ddd;
+        outline: none;
+        margin: 10px 0;
+    }
+
+    .slider-container input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #3498db;
+        cursor: pointer;
+    }
+
+    .slider-container input[type="range"]::-moz-range-thumb {
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #3498db;
+        cursor: pointer;
+    }
+
+    /* Hide any existing year filter dropdowns */
+    select[id*="year"] {
+        display: none !important;
+    }
+
+    .point {
+        transition: fill 0.3s ease;
+    }
+    
+    .x-axis path,
+    .y-axis path,
+    .x-axis line,
+    .y-axis line {
+        transition: all 0.3s ease;
+    }
+    
+    .x-axis text,
+    .y-axis text {
+        transition: all 0.3s ease;
+    }
+`;
+
+// Add the styles to the document
+const styleSheet = document.createElement("style");
+styleSheet.textContent = styles;
+document.head.appendChild(styleSheet);

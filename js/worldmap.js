@@ -5,6 +5,10 @@ class WorldMap {
         this.data = data;
         this.container = document.getElementById(containerId);
         
+        // Get available years from data
+        this.availableYears = [...new Set(this.data.map(d => d.year))].sort();
+        this.selectedYear = this.availableYears[this.availableYears.length - 1]; // Default to most recent year
+        
         // Set up dimensions
         this.margin = { top: 20, right: 20, bottom: 20, left: 20 };
         this.width = this.container.clientWidth - this.margin.left - this.margin.right;
@@ -21,15 +25,20 @@ class WorldMap {
     }
     
     processData() {
-        // Group universities by location and calculate metrics
-        this.locationData = {};
+        const vis = this;
         
-        this.data.forEach(d => {
+        // Filter data by selected year
+        const yearData = vis.data.filter(d => d.year === vis.selectedYear);
+        
+        // Group universities by location and calculate metrics
+        vis.locationData = {};
+        
+        yearData.forEach(d => {
             console.log(`Processing university: ${d.name}, Year: ${d.year}`); // Log each university's year
             if (!d.location) return;
             
-            if (!this.locationData[d.location]) {
-                this.locationData[d.location] = {
+            if (!vis.locationData[d.location]) {
+                vis.locationData[d.location] = {
                     name: d.location,
                     universities: [],
                     scores_overall: 0,
@@ -43,30 +52,30 @@ class WorldMap {
             }
             
             // Add university to location
-            this.locationData[d.location].universities.push(d.name);
+            vis.locationData[d.location].universities.push(d.name);
             
             // Sum up scores
-            this.locationData[d.location].scores_overall += d.scores_overall || 0;
-            this.locationData[d.location].scores_teaching += d.scores_teaching || 0;
-            this.locationData[d.location].scores_international_outlook += d.scores_international_outlook || 0;
-            this.locationData[d.location].scores_industry_income += d.scores_industry_income || 0;
-            this.locationData[d.location].scores_research += d.scores_research || 0;
-            this.locationData[d.location].scores_citations += d.scores_citations || 0;
-            this.locationData[d.location].count++;
+            vis.locationData[d.location].scores_overall += d.scores_overall || 0;
+            vis.locationData[d.location].scores_teaching += d.scores_teaching || 0;
+            vis.locationData[d.location].scores_international_outlook += d.scores_international_outlook || 0;
+            vis.locationData[d.location].scores_industry_income += d.scores_industry_income || 0;
+            vis.locationData[d.location].scores_research += d.scores_research || 0;
+            vis.locationData[d.location].scores_citations += d.scores_citations || 0;
+            vis.locationData[d.location].count++;
         });
         
         // Convert to array for easier processing
-        this.locationArray = Object.values(this.locationData);
+        vis.locationArray = Object.values(vis.locationData);
         
         // Find min and max values for color scale
-        this.minScore = d3.min(this.locationArray, d => d.scores_overall);
-        this.maxScore = d3.max(this.locationArray, d => d.scores_overall);
+        vis.minScore = d3.min(vis.locationArray, d => d.scores_overall);
+        vis.maxScore = d3.max(vis.locationArray, d => d.scores_overall);
         
         // Calculate average score for reference
-        this.avgScore = d3.mean(this.locationArray, d => d.scores_overall);
+        vis.avgScore = d3.mean(vis.locationArray, d => d.scores_overall);
         
-        console.log("Processed location data:", this.locationArray);
-        console.log("Min score:", this.minScore, "Max score:", this.maxScore, "Avg score:", this.avgScore);
+        console.log(`Year ${vis.selectedYear} data:`, vis.locationArray);
+        console.log(`Year ${vis.selectedYear} - Min score: ${vis.minScore}, Max score: ${vis.maxScore}, Avg score: ${vis.avgScore}`);
         
         // Create a lookup table for country data
         this.wrangleData();
@@ -166,6 +175,21 @@ class WorldMap {
         
         // Create legend first (so it appears behind the globe)
         vis.createLegend();
+        
+        // Modify the page title - make it smaller and move it to the center top
+        d3.select("#page4 .main-title")
+            .text("")  // Clear the text as we'll add it in createYearSelector
+            .style("font-size", "36px")
+            .style("position", "absolute")
+            .style("top", "20px")
+            .style("left", "50%")
+            .style("transform", "translateX(-50%)")
+            .style("margin", "0")
+            .style("text-align", "center")
+            .style("width", "100%");
+        
+        // Create the year selector integrated with the title
+        vis.createYearSelector();
         
         // Load world map data
         d3.json("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json")
@@ -367,11 +391,13 @@ class WorldMap {
             .attr("height", 10)
             .attr("fill", d => d);
         
-        // Add legend axis
+        // Add axis to legend with a class
         vis.legend.append("g")
-            .attr("transform", "translate(0, 10)")
+            .attr("class", "legend-axis")
+            .attr("transform", "translate(0,10)")
             .call(legendAxis)
-            .select(".domain").remove();
+            .selectAll("text")
+            .style("font-size", "10px");
     }
     
     makeGlobeDraggable() {
@@ -507,5 +533,241 @@ class WorldMap {
             .style("top", "100px")
             .style("transform", "none")
             .style("z-index", "100");
+    }
+
+    // Add a render method to handle window resizing
+    render() {
+        const vis = this;
+        
+        // Update dimensions
+        vis.width = vis.container.clientWidth - vis.margin.left - vis.margin.right;
+        vis.height = vis.container.clientHeight - vis.margin.top - vis.margin.bottom;
+
+        // Update SVG dimensions
+        vis.svg
+            .attr("width", vis.width + vis.margin.left + vis.margin.right)
+            .attr("height", vis.height + vis.margin.top + vis.margin.bottom);
+
+        // Update projection
+        vis.projection
+            .translate([vis.width / 2, vis.height / 2])
+            .scale(Math.min(vis.width, vis.height) * 0.4);
+
+        // Update all paths with new projection
+        vis.svg.select(".ocean")
+            .attr("d", vis.path);
+
+        vis.svg.select(".graticule")
+            .attr("d", vis.path);
+
+        vis.svg.selectAll(".country")
+            .attr("d", vis.path);
+
+        // Update legend position if needed
+        this.createLegend();
+    }
+
+    // Modify the createYearSelector method to improve the dropdown styling
+    createYearSelector() {
+        const vis = this;
+        
+        // First, remove the existing year selector if it exists
+        d3.select(".year-selector-container").remove();
+        
+        // Update the main title to include the year
+        const mainTitle = d3.select("#page4 .main-title");
+        
+        // Clear any existing content
+        mainTitle.html("");
+        
+        // Add the static part of the title
+        mainTitle.append("span")
+            .text("Global University Rankings in ");
+        
+        // Create a container for the year selector that will be styled as part of the title
+        const yearContainer = mainTitle.append("span")
+            .attr("class", "year-selector-container")
+            .style("position", "relative")
+            .style("display", "inline-block");
+        
+        // Add the year as text with special styling
+        const yearText = yearContainer.append("span")
+            .attr("class", "selected-year")
+            .text(vis.selectedYear)
+            .style("color", "#cb181d")  // Use the same red as in your color scheme
+            .style("font-weight", "bold")
+            .style("cursor", "pointer")
+            .style("border-bottom", "2px dotted #cb181d")
+            .style("padding-bottom", "2px");
+        
+        // Add a small dropdown arrow that looks better
+        yearContainer.append("span")
+            .html(" &#9662;")  // Unicode for a down arrow
+            .style("font-size", "0.7em")
+            .style("color", "#cb181d")
+            .style("position", "relative")
+            .style("top", "-2px");
+        
+        // Create a dropdown for year selection with improved styling
+        const dropdown = yearContainer.append("div")
+            .attr("class", "year-dropdown")
+            .style("position", "absolute")
+            .style("top", "100%")
+            .style("left", "50%")
+            .style("transform", "translateX(-50%)")
+            .style("background-color", "white")
+            .style("border", "1px solid #eee")
+            .style("border-radius", "8px")
+            .style("box-shadow", "0 4px 15px rgba(0,0,0,0.1)")
+            .style("z-index", "1000")
+            .style("display", "none")  // Initially hidden
+            .style("padding", "8px 0")
+            .style("margin-top", "10px")
+            .style("min-width", "120px")
+            .style("max-height", "200px")
+            .style("overflow-y", "auto")
+            .style("text-align", "center");
+        
+        // Add a little arrow at the top of the dropdown
+        dropdown.append("div")
+            .style("position", "absolute")
+            .style("top", "-8px")
+            .style("left", "50%")
+            .style("transform", "translateX(-50%)")
+            .style("width", "0")
+            .style("height", "0")
+            .style("border-left", "8px solid transparent")
+            .style("border-right", "8px solid transparent")
+            .style("border-bottom", "8px solid white");
+        
+        // Add options for each year with improved styling
+        vis.availableYears.forEach(year => {
+            dropdown.append("div")
+                .attr("class", "year-option")
+                .text(year)
+                .style("padding", "8px 15px")
+                .style("cursor", "pointer")
+                .style("transition", "all 0.2s ease")
+                .style("color", year === vis.selectedYear ? "#cb181d" : "#333")
+                .style("font-weight", year === vis.selectedYear ? "bold" : "normal")
+                .style("font-size", "18px")
+                .style("border-left", year === vis.selectedYear ? "3px solid #cb181d" : "3px solid transparent")
+                .on("mouseover", function() {
+                    d3.select(this)
+                        .style("background-color", "#f8f8f8")
+                        .style("color", "#cb181d");
+                })
+                .on("mouseout", function() {
+                    d3.select(this)
+                        .style("background-color", "white")
+                        .style("color", year === vis.selectedYear ? "#cb181d" : "#333");
+                })
+                .on("click", function(event) {
+                    const selectedYear = +d3.select(this).text();
+                    vis.selectedYear = selectedYear;
+                    
+                    // Update the displayed year
+                    yearText.text(selectedYear);
+                    
+                    // Hide the dropdown
+                    dropdown.style("display", "none");
+                    
+                    // Update the visualization
+                    vis.updateVisualization();
+                    
+                    // Prevent the event from bubbling up
+                    if (event) event.stopPropagation();
+                });
+        });
+        
+        // Add a subtle separator between years
+        dropdown.selectAll(".year-option:not(:last-child)")
+            .style("border-bottom", "1px solid #f0f0f0");
+        
+        // Toggle dropdown when clicking on the year container
+        yearContainer.on("click", function(event) {
+            const isVisible = dropdown.style("display") === "block";
+            dropdown.style("display", isVisible ? "none" : "block");
+            
+            // Prevent the event from bubbling up
+            if (event) event.stopPropagation();
+        });
+        
+        // Hide dropdown when clicking elsewhere
+        d3.select("body").on("click", function() {
+            dropdown.style("display", "none");
+        });
+    }
+
+    // Modify the updateVisualization method to update the title
+    updateVisualization() {
+        const vis = this;
+        
+        // Process data for the new year
+        vis.processData();
+        
+        // Update color scale with new min/max values
+        vis.colorScale = d3.scalePow()
+            .exponent(0.3)
+            .domain([0, vis.maxScore])
+            .range([0, 1]);
+        
+        // Update country colors
+        vis.countries
+            .attr("fill", d => {
+                // Find matching location in our data
+                const countryName = d.properties.name;
+                let matchedLocation = null;
+                
+                // Try to match with our location data
+                Object.values(vis.locationData).forEach(location => {
+                    if (location.name === countryName || 
+                        location.name.includes(countryName) || 
+                        countryName.includes(location.name) ||
+                        (vis.countryNameMap[countryName] && location.name.includes(vis.countryNameMap[countryName]))) {
+                        matchedLocation = location;
+                    }
+                });
+                
+                if (matchedLocation) {
+                    // Apply the power scale to get a normalized value, then map to color
+                    const normalizedValue = vis.colorScale(matchedLocation.scores_overall);
+                    return vis.colorInterpolator(normalizedValue);
+                } else {
+                    return "#f7f4f9"; // Default lightest color
+                }
+            });
+        
+        // Update legend with new max value
+        vis.updateLegend();
+        
+        // Hide the left panel if it's visible
+        vis.leftPanel.style("opacity", "0");
+        
+        // Update the year in the title
+        d3.select(".selected-year").text(vis.selectedYear);
+    }
+
+    // Add a method to update the legend
+    updateLegend() {
+        const vis = this;
+        
+        // Update legend scale
+        const legendScale = d3.scaleLinear()
+            .domain([0, vis.maxScore])
+            .range([0, 200]);
+        
+        // Update legend axis
+        const legendAxis = d3.axisBottom(legendScale)
+            .tickValues([0, Math.round(vis.maxScore * 0.1), Math.round(vis.maxScore * 0.25), 
+                         Math.round(vis.maxScore * 0.5), Math.round(vis.maxScore)])
+            .tickFormat(d3.format(",d"))
+            .tickSize(0);
+        
+        // Update axis
+        vis.legend.select(".legend-axis")
+            .call(legendAxis)
+            .selectAll("text")
+            .style("font-size", "10px");
     }
 }
