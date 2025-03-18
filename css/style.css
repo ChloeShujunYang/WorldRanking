@@ -702,8 +702,9 @@ html, body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;  /* 进一步减少图表间距 */
-    margin-top: -10px;  /* 图表容器也往上移 */
+    /* gap: 10px;*/  /* 进一步减少图表间距 */
+    margin-top: 70px;  /* 图表容器也往上移 */
+    height: 700px;
 }
 
 #radar-chart-container, #bar-chart-container {
@@ -1303,7 +1304,7 @@ h1, h2, h3, h4, h5, h6 {
 
 #radar-chart-container, #bar-chart-container {
     flex: 1;
-    margin: 10px;
+    margin: 0px 10px;
 }
 
 canvas {
@@ -1673,7 +1674,7 @@ canvas {
     flex: 1;
     position: relative;
     min-height: 300px;
-    margin: 10px;
+    margin: 0px 10px;
 }
 
 #bar-chart-container {
