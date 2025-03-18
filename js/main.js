@@ -3,7 +3,7 @@ const yearFormatter = d3.timeFormat("%Y");
 const yearParser = d3.timeParse("%Y");
 
 // Global visualization instances
-let worldMap, timeline, scatterplot, barChart, radarChart;
+let worldMap, scatterplot, barChart, radarChart, lineChart;
 let scatterplotInitialized = false; // Flag to track scatterplot initialization
 
 // (1) Load data with promises
@@ -20,7 +20,7 @@ Promise.all(promises)
         console.log("Loaded ranking data:", rankingData);
 
         rankingData = rankingData.map(d => ({
-            rank_order: +d.rank_order || 0,
+            rank: +d.rank || 0,
             name: d.name,
             location: d.location,
             year: +d.year || 0,
@@ -32,26 +32,28 @@ Promise.all(promises)
             scores_citations: +d.scores_citations || 0
         }));
 
-        // Log the filtered data for 2024
-        const universities2024 = rankingData.filter(d => d.year === 2024);
-        console.log("Filtered universities for 2024:", universities2024);
-
-        // Check specifically for Canada
-        const universitiesCanada = universities2024.filter(d => d.location === "Canada");
-        console.log("Universities in Canada for 2024:", universitiesCanada);
-
         // Initialize visualization instances
         worldMap = new WorldMap("worldmap-chart", rankingData);
         barChart = new BarChart("bar-chart-canvas", rankingData);
         radarChart = new RadarChart("radar-chart-canvas", rankingData);
-        timeline = new Timeline("timeline-chart", rankingData);
+        lineChart = new LineChart("line-chart", rankingData);
         
         // Initialize scatterplot only if it hasn't been initialized
         if (!scatterplotInitialized) {
             scatterplot = new Scatterplot("scatterplot-chart", rankingData);
-            scatterplotInitialized = true; // Set the flag to true after initialization
+            scatterplotInitialized = true;
         }
 
+        // Add window resize event listener
+        window.addEventListener('resize', function() {
+            if (worldMap) worldMap.render();
+            if (scatterplot) scatterplot.render();
+            if (lineChart) lineChart.render();
+            if (barChart) barChart.updateChart();
+            if (radarChart) radarChart.updateChart();
+        });
+
+        // Initial updates
         barChart.updateChart();
         radarChart.updateChart();
     })
@@ -117,7 +119,6 @@ function createVis(data) {
 
     // (3) Create visualization instances
     worldMap = new WorldMap("worldmap-chart", rankingData);
-    timeline = new Timeline("timeline-chart", rankingData);
     scatterplot = new Scatterplot("scatterplot-chart", rankingData);
 
     // (4) Set up page navigation and intersection observer
@@ -286,8 +287,10 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('resize', () => {
     // Refresh visualizations if needed
     if (worldMap) worldMap.render();
-    if (timeline) timeline.render();
     if (scatterplot) scatterplot.render();
+    if (lineChart) lineChart.render();
+    if (barChart) barChart.updateChart();
+    if (radarChart) radarChart.updateChart();
 });
 
 // Add event listener for university selection
