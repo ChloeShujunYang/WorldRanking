@@ -664,7 +664,7 @@ html, body {
 #page4 .content-wrapper {
     position: relative;
     height: 100vh;
-    padding: 0 20px;
+    padding: 20px 300px 0px 300px !important;
     display: flex;
     flex-direction: column;
 }
@@ -1474,6 +1474,8 @@ canvas {
     position: relative;
     overflow: hidden;
     margin: 0; /* Remove margin to reduce white space */
+    display: flex;
+    justify-content: center;
 }
 
 /* Adjust the title for the worldmap page */
@@ -1799,6 +1801,7 @@ canvas {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin: 0px 200px;
 }
 
 #scatterplot-chart {
