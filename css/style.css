@@ -703,8 +703,10 @@ html, body {
     display: flex;
     flex-direction: column;
     /* gap: 10px;*/  /* 进一步减少图表间距 */
-    margin-top: 70px;  /* 图表容器也往上移 */
+    margin-top: 20px;  /* 图表容器也往上移 */
+    margin-right: 300px;
     height: 700px;
+    width: 350px;
 }
 
 #radar-chart-container, #bar-chart-container {
