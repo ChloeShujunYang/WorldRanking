@@ -41,9 +41,12 @@ class BarChart {
                 datasets: [{
                     label: 'Overall Score',
                     data: [],
-                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
                     borderColor: 'rgb(54, 162, 235)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    hoverBackgroundColor: 'rgb(54, 162, 235)',
+                    hoverBorderColor: 'rgb(54, 163, 235)',
+                    hoverBorderWidth: 2
                 }]
             },
             options: {
@@ -76,6 +79,14 @@ class BarChart {
                         padding: 20
                     }
                 },
+                animation: {
+                    duration: 150
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true,
+                    animationDuration: 150
+                },
                 onClick: (event, elements) => {
                     if (elements.length > 0) {
                         const index = elements[0].index;
@@ -94,14 +105,16 @@ class BarChart {
 
     updateRangeFilter(totalUniversities) {
         console.log(`BarChart: Updating range filter for ${totalUniversities} universities`);
-        const filterSelect = document.getElementById('rank-range-filter');
+        const dropdownMenu = document.getElementById('rank-range-filter');
+        const selectedText = document.querySelector('.selected-text');
+        const dropdownHeader = document.querySelector('.dropdown-header');
         
-        if (!filterSelect) {
-            console.error('BarChart: Range filter select element not found');
+        if (!dropdownMenu || !selectedText || !dropdownHeader) {
+            console.error('BarChart: Dropdown elements not found');
             return;
         }
         
-        filterSelect.innerHTML = ''; // Clear existing options
+        dropdownMenu.innerHTML = ''; // Clear existing options
         
         const rangeSize = 5; // Number of universities per range
         const numberOfRanges = Math.ceil(totalUniversities / rangeSize);
@@ -109,27 +122,68 @@ class BarChart {
         for (let i = 0; i < numberOfRanges; i++) {
             const start = i * rangeSize + 1;
             const end = Math.min((i + 1) * rangeSize, totalUniversities);
-            const option = document.createElement('option');
-            option.value = `${start}-${end}`;
+            const option = document.createElement('div');
+            option.className = 'dropdown-option';
+            option.dataset.value = `${start}-${end}`;
             option.textContent = `Rank ${start}-${end}`;
-            filterSelect.appendChild(option);
+            if (this.selectedRange === `${start}-${end}`) {
+                option.classList.add('selected');
+            }
+            dropdownMenu.appendChild(option);
         }
 
         // Set the first range as default if no range is selected
-        if (!this.selectedRange || !filterSelect.querySelector(`option[value="${this.selectedRange}"]`)) {
-            this.selectedRange = filterSelect.options[0].value;
+        if (!this.selectedRange) {
+            this.selectedRange = '1-5';
+            selectedText.textContent = 'Rank 1-5';
         }
+
+        // Update selected text
+        selectedText.textContent = `Rank ${this.selectedRange}`;
     }
 
     setupEventListeners() {
-        const filterSelect = document.getElementById('rank-range-filter');
-        if (!filterSelect) {
-            console.error('BarChart: Range filter select element not found for event listener');
+        const dropdownHeader = document.querySelector('.dropdown-header');
+        const customDropdown = document.querySelector('.custom-dropdown');
+        const dropdownMenu = document.getElementById('rank-range-filter');
+        
+        if (!dropdownHeader || !customDropdown || !dropdownMenu) {
+            console.error('BarChart: Dropdown elements not found for event listener');
             return;
         }
         
-        filterSelect.addEventListener('change', (event) => {
-            this.selectedRange = event.target.value;
+        // Toggle dropdown
+        dropdownHeader.addEventListener('click', () => {
+            customDropdown.classList.toggle('open');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!customDropdown.contains(event.target)) {
+                customDropdown.classList.remove('open');
+            }
+        });
+
+        // Handle option selection
+        dropdownMenu.addEventListener('click', (event) => {
+            const option = event.target.closest('.dropdown-option');
+            if (!option) return;
+
+            // Update selected option
+            const value = option.dataset.value;
+            this.selectedRange = value;
+            document.querySelector('.selected-text').textContent = `Rank ${value}`;
+
+            // Update selected state
+            dropdownMenu.querySelectorAll('.dropdown-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            option.classList.add('selected');
+
+            // Close dropdown
+            customDropdown.classList.remove('open');
+
+            // Update chart
             this.updateChart();
         });
     }
@@ -179,12 +233,6 @@ class BarChart {
         this.chart.options.plugins.title.text = `Top Universities in ${this.selectedCountry}`;
         
         this.chart.update();
-
-        // Update the dropdown selection to reflect the current range
-        const filterSelect = document.getElementById('rank-range-filter');
-        if (filterSelect) {
-            filterSelect.value = this.selectedRange; // Set the dropdown to the current range
-        }
 
         // Trigger selection of first university for radar chart
         if (this.currentUniversities.length > 0) {

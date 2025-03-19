@@ -667,6 +667,7 @@ html, body {
     padding: 0 20px;
     display: flex;
     flex-direction: column;
+    background-color: white;
 }
 
 #page4 .main-title {
@@ -685,9 +686,10 @@ html, body {
 #page4 .map-charts-grid {
     display: flex;
     width: 100%;
-    height: calc(100vh - 40px);  /* 进一步减少高度 */
+    height: calc(100vh - 40px);
     gap: 20px;
-    margin-top: -40px;  /* 增加负边距使内容更往上移 */
+    margin-top: -40px;
+    background-color: white;
 }
 
 /* Left side - World Map */
@@ -1266,7 +1268,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #page4 {
-    background-color: #f8f9fa;
+    background-color: white;
 }
 
 /* Content wrapper styles for full-screen effect on pages 4, 5, and 6 */
@@ -1415,18 +1417,6 @@ canvas {
     margin: 5px 0;
     font-size: 14px;
 }
-
-#worldmap-legend {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    z-index: 100;
-}
-
 /* Ensure the legend is behind the globe */
 .legend {
     z-index: 1;
@@ -1621,18 +1611,6 @@ canvas {
     margin: 5px 0;
     font-size: 14px;
 }
-
-#worldmap-legend {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    z-index: 100;
-}
-
 /* Globe Interaction Styles */
 .globe-group {
     cursor: grab;
@@ -2039,4 +2017,121 @@ canvas {
 .highlight-text {
     color: #a50f15;
     font-weight: 500; /* Increased font weight to match image */
+}
+
+/* Custom Dropdown Styles */
+.custom-dropdown {
+    position: relative;
+    width: 200px;
+    font-family: 'Playfair Display', serif;
+    margin-bottom: 10px;
+}
+
+.dropdown-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    cursor: pointer;
+    user-select: none;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.dropdown-header:hover {
+    background: #f9f9f9;
+    border-color: #d1d1d1;
+}
+
+.dropdown-arrow {
+    transition: transform 0.2s ease;
+}
+
+.custom-dropdown.open .dropdown-arrow {
+    transform: rotate(180deg);
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    background: white;
+    border: 1px solid #e5e5e5;
+    border-radius: 6px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.custom-dropdown.open .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-option {
+    padding: 8px 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 14px;
+}
+
+.dropdown-option:hover {
+    background: #f5f5f5;
+}
+
+.dropdown-option.selected {
+    background: #f0f0f0;
+    font-weight: 500;
+}
+
+/* Scrollbar styles for the dropdown menu */
+.dropdown-menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 4px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+    background: #d1d1d1;
+    border-radius: 4px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb:hover {
+    background: #b1b1b1;
+}
+
+/* Bar chart container adjustments */
+#bar-chart-container {
+    flex: 1;
+    position: relative;
+    min-height: 350px;
+    height: 350px;
+    margin: 10px;
+    overflow: visible;
+}
+
+#bar-chart-canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.right-charts {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: calc(100vh - 100px);
 }

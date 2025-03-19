@@ -69,7 +69,17 @@
                             <canvas id="radar-chart-canvas"></canvas>
                         </div>
                         <div id="bar-chart-container">
-                            <select id="rank-range-filter"></select>
+                            <div class="custom-dropdown">
+                                <div class="dropdown-header">
+                                    <span class="selected-text">Rank 1-5</span>
+                                    <svg class="dropdown-arrow" width="12" height="8" viewBox="0 0 12 8">
+                                        <path d="M1 1L6 6L11 1" stroke="currentColor" stroke-width="2" fill="none"/>
+                                    </svg>
+                                </div>
+                                <div class="dropdown-menu" id="rank-range-filter">
+                                    <!-- Options will be populated by JavaScript -->
+                                </div>
+                            </div>
                             <canvas id="bar-chart-canvas"></canvas>
                         </div>
                     </div>
