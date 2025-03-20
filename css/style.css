@@ -10,7 +10,7 @@
 
 /* Global font settings */
 body {
-    font-family: 'Lora', serif;
+    font-family: sans-serif;
     overflow: hidden;
 }
 
@@ -149,7 +149,8 @@ footer {
 html, body {
     margin: 0;
     padding: 0;
-    overflow: hidden;
+    width: 100%;
+    overflow-x: hidden;  /* 禁止水平滚动 */
 }
 
 /* Page container styles */
@@ -160,6 +161,9 @@ html, body {
     position: relative;
     opacity: 0; /* Initial hidden */
     transition: opacity 0.3s;
+    width: 100%;
+    max-width: 100vw;  /* 限制最大宽度为视口宽度 */
+    overflow-x: hidden;
 }
 
 /* Individual page styles */
@@ -186,6 +190,11 @@ html, body {
     background-color: white;
     box-shadow: none;
     border: none;
+    width: 100%;
+    max-width: 100vw;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
 }
 
 /* Scroll hint styles */
@@ -296,7 +305,7 @@ html, body {
 
 /* Title styles */
 .main-title {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     color: #333;
     text-align: center;
     font-size: 2.5rem;
@@ -670,7 +679,7 @@ html, body {
 }
 
 #page4 .main-title {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     font-size: 2.5rem;
     color: #333;
     text-align: center;
@@ -1105,7 +1114,7 @@ html, body {
 
 /* Title styles */
 .main-title {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     color: #333;
     text-align: center;
     font-size: 2.5rem;
@@ -1121,7 +1130,7 @@ html, body {
 }
 
 #page4 .main-title {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     font-size: 2.5rem;
     color: #333;
     text-align: center;
@@ -1264,7 +1273,7 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
 }
 
 #page3 {
@@ -1496,7 +1505,7 @@ canvas {
 }
 
 .panel-title {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     color: #333;
     margin-top: 0;
     margin-bottom: 15px;
@@ -1687,7 +1696,7 @@ canvas {
 }
 
 .panel-title {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     color: #333;
     margin-top: 0;
     margin-bottom: 15px;
@@ -1846,7 +1855,7 @@ canvas {
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: white;
-    font-family: 'Lora', serif;
+    font-family: sans-serif;
     z-index: 10;
 }
 
@@ -1862,17 +1871,17 @@ canvas {
 }
 
 .chart-title, .x-axis-label, .y-axis-label {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     font-weight: 700;
 }
 
 .x-axis text, .y-axis text {
-    font-family: 'Lora', serif;
+    font-family: sans-serif;
     font-size: 12px;
 }
 
 .legend text {
-    font-family: 'Lora', serif;
+    font-family: sans-serif;
     font-size: 12px;
     alignment-baseline: middle;
 }
@@ -1882,11 +1891,11 @@ canvas {
     border-left: 1px solid #eee;
     padding: 0;
     overflow-y: auto;
-    font-family: 'Lora', serif;
+    font-family: sans-serif;
 }
 
 .university-info h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     color: #333;
     margin-bottom: 20px;
     padding-bottom: 10px;
@@ -1894,7 +1903,7 @@ canvas {
 }
 
 .university-info h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     color: #333;
     margin: 20px 0 15px;
 }
@@ -1970,12 +1979,12 @@ canvas {
 
 /* Add styles for the year selector */
 .year-selector-container {
-    font-family: 'Open Sans', sans-serif;
+    font-family: sans-serif;
     color: #333;
 }
 
 #year-selector {
-    font-family: 'Open Sans', sans-serif;
+    font-family: sans-serif;
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -1996,7 +2005,7 @@ canvas {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: serif; /* Using serif font to match the image */
+    font-family: sans-serif; /* Using serif font to match the image */
 }
 
 #page6\.5 .content-wrapper {
@@ -2018,7 +2027,7 @@ canvas {
     color: #333;
     margin-bottom: 30px;
     font-weight: 600; /* Increased font weight to match image */
-    font-family: serif;
+    font-family: sans-serif;
     line-height: 1.2;
 }
 
@@ -2029,7 +2038,7 @@ canvas {
     text-align: justify;
     margin-bottom: 40px;
     font-weight: 500; /* Increased font weight to match image */
-    font-family: serif;
+    font-family: sans-serif;
 }
 
 .conclusion-question {
@@ -2039,7 +2048,7 @@ canvas {
     text-align: center;
     margin-bottom: 40px;
     font-weight: 500; /* Increased font weight to match image */
-    font-family: serif;
+    font-family: sans-serif;
 }
 
 .conclusion-insight {
@@ -2048,7 +2057,7 @@ canvas {
     color: #333;
     text-align: center;
     font-weight: 500; /* Increased font weight to match image */
-    font-family: serif;
+    font-family: sans-serif;
 }
 
 .highlight-text {
@@ -2080,7 +2089,7 @@ canvas {
 }
 
 #page3-5 h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     font-size: 2.8rem;
     color: #000102;
     margin-bottom: 30px;
@@ -2157,7 +2166,7 @@ canvas {
 }
 
 #page4-5 h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     font-size: 2.4rem;
     color: #000509;
     margin-bottom: 30px;
@@ -2207,7 +2216,7 @@ canvas {
 }
 
 #page5-5 h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     font-size: 2.4rem;
     color: #000509;
     margin-bottom: 30px;
@@ -2250,7 +2259,7 @@ canvas {
 .custom-dropdown {
     position: relative;
     width: 160px;
-    font-family: 'Playfair Display', serif;
+    font-family: sans-serif;
     margin-bottom: 15px;
     margin-left: 10px;
 }
@@ -2351,6 +2360,17 @@ canvas {
 
 .dropdown-menu::-webkit-scrollbar-thumb:hover {
     background: #999;
+}
+
+/* 确保所有图表容器也不会溢出 */
+#worldmap-chart,
+#line-chart,
+#scatterplot-chart,
+#bar-chart-container,
+#radar-chart-container {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 

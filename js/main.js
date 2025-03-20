@@ -44,13 +44,17 @@ Promise.all(promises)
             scatterplotInitialized = true;
         }
 
-        // Add window resize event listener
+        // Add window resize event listener with debounce
+        let resizeTimeout;
         window.addEventListener('resize', function() {
-            if (worldMap) worldMap.render();
-            if (scatterplot) scatterplot.render();
-            if (lineChart) lineChart.render();
-            if (barChart) barChart.updateChart();
-            if (radarChart) radarChart.updateChart();
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function() {
+                if (worldMap) worldMap.render();
+                if (scatterplot) scatterplot.render();  // 只调用 render
+                if (lineChart) lineChart.render();
+                if (barChart) barChart.updateChart();
+                if (radarChart) radarChart.updateChart();
+            }, 250);  // 250ms 延迟
         });
 
         // Initial updates

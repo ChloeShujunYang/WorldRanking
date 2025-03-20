@@ -1,4 +1,3 @@
-// feel free to change any part of the code
 class Scatterplot {
     constructor(containerId, data) {
         console.log("Scatterplot Debug: Constructor start");
@@ -50,6 +49,7 @@ class Scatterplot {
             yearRange: this.yearRange
         });
         
+        this.isInitialRender = true;  // 添加标志来追踪是否是初始渲染
         this.initVis();
     }
 
@@ -59,10 +59,6 @@ class Scatterplot {
         // Clear any existing content
         const containerElement = document.getElementById(vis.containerId);
         containerElement.innerHTML = '';
-        
-        // Set fixed dimensions for the container
-        const fixedWidth = 1920;
-        const fixedHeight = 1080;
         
         // First, remove any existing title to prevent duplicates
         d3.select("#page6 .content-wrapper .main-title").remove();
@@ -89,8 +85,8 @@ class Scatterplot {
         const container = d3.select("#" + vis.containerId)
             .style("display", "grid")
             .style("grid-template-columns", "42% 58%")
-            .style("width", `${fixedWidth}px`)
-            .style("height", `${fixedHeight}px`)
+            .style("width", "100%")
+            .style("height", "100vh")
             .style("gap", "20px")
             .style("padding", "20px")
             .style("position", "relative")
@@ -126,7 +122,7 @@ class Scatterplot {
             .attr("class", "hexagon-instruction")
             .style("text-align", "center")
             .style("margin", "0 0 20px 0")
-            .style("font-size", "18px")
+            .style("font-size", "13px")
             .style("color", "#666")
             .style("font-style", "italic")
             .text("Click any line to explore the relationship between two scores");
@@ -256,23 +252,68 @@ class Scatterplot {
             }
         }
 
-        // Draw lines in the bottom layer with cursor pointer
-        vis.linesGroup.selectAll(".variable-line")
-            .data(vis.lines)
-            .join("line")
-            .attr("class", "variable-line")
-            .attr("x1", d => d.source.x)
-            .attr("y1", d => d.source.y)
-            .attr("x2", d => d.target.x)
-            .attr("y2", d => d.target.y)
-            .style("stroke", "#cccccc")
-            .style("stroke-width", 5)
-            .style("opacity", 0.5)
-            .style("cursor", "pointer")
-            .on("click", function(event, d) {
-                vis.selectVariables(d.variables);
-            });
+     // ** 添加选中线条存储变量 **
+     vis.selectedLine = null; 
 
+     // ** 替换原有的线条绘制代码 **
+     vis.linesGroup.selectAll(".variable-line")
+         .data(vis.lines)
+         .join("line")
+         .attr("class", "variable-line")
+         .attr("x1", d => d.source.x)
+         .attr("y1", d => d.source.y)
+         .attr("x2", d => d.target.x)
+         .attr("y2", d => d.target.y)
+         .style("stroke", "#cccccc")
+         .style("stroke-width", 5)
+         .style("opacity", 0.5)
+         .style("cursor", "pointer")
+         .on("mouseover", function(event, d) {
+             if (vis.selectedLine !== this) { // 只有不是选中的线才变色
+                 d3.select(this)
+                     .raise() 
+                     .transition()
+                     .duration(200)
+                     .style("stroke", "#3498db")
+                     .style("stroke-width", 7)
+                     .style("opacity", 1);
+             }
+         })
+         .on("mouseout", function(event, d) {
+             if (vis.selectedLine !== this) { // 只有不是选中的线才恢复默认色
+                 d3.select(this)
+                     .transition()
+                     .duration(200)
+                     .style("stroke", "#cccccc")
+                     .style("stroke-width", 5)
+                     .style("opacity", 0.5);
+             }
+         })
+         .on("click", function(event, d) {
+             // 先让所有线恢复默认颜色
+             vis.linesGroup.selectAll(".variable-line")
+                 .transition()
+                 .duration(200)
+                 .style("stroke", "#cccccc")
+                 .style("stroke-width", 5)
+                 .style("opacity", 0.5);
+ 
+             // 让当前点击的线保持蓝色
+             d3.select(this)
+                 .raise()
+                 .transition()
+                 .duration(200)
+                 .style("stroke", "#3498db")
+                 .style("stroke-width", 7)
+                 .style("opacity", 1);
+ 
+             // 记录当前选中的线
+             vis.selectedLine = this;
+ 
+             // 触发变量选择更新
+             vis.selectVariables(d.variables);
+         });
+         
         // Define colors
         vis.colors = {
             circleFillDefault: "#add8e6",    // Light blue
@@ -395,93 +436,98 @@ class Scatterplot {
         
         // Define colors
         vis.plotColors = {
-            darkGrey: "#4a4a4a"  // Dark grey color for text and axes
+            darkGrey: "#4a4a4a",
+            lightBlue: "#add8e6",
+            darkBlue: "#3498db"
         };
 
+        // Update circle radius
+        vis.circleRadius = 6;
+
         // Get container dimensions
-        const containerWidth = vis.plotContainer.node().clientWidth;
-        const containerHeight = vis.plotContainer.node().clientHeight;
-        
-        // Calculate size for square plot (use smaller dimension)
-        const size = Math.min(containerWidth, containerHeight) * 0.8; // 80% of smaller dimension
-        
-        // Update margins to move everything down
+        const containerWidth = vis.plotContainer.node().getBoundingClientRect().width;
+        const containerHeight = window.innerHeight * 0.8;
+
+        // Calculate size for square plot
+        const size = Math.min(containerWidth, containerHeight);
+
+        // Update margins
         vis.margin = {
-            top: 100,  // Increased from 70 to 100 to move everything down 30 units
+            top: 100,
             right: 40,
             bottom: 50,
             left: 125
         };
 
-        // Set width and height to be equal
+        // Set width and height
         vis.width = size - vis.margin.left - vis.margin.right;
-        vis.height = vis.width; // Make it square
+        vis.height = size - vis.margin.top - vis.margin.bottom;
 
-        console.log("Scatterplot Debug: Plot dimensions:", {
-            containerWidth,
-            containerHeight,
-            plotSize: size,
-            width: vis.width,
-            height: vis.height
-        });
+        // Remove existing SVG if it exists
+        vis.plotContainer.select("svg").remove();
 
-        // Create SVG with square dimensions
+        // Create new SVG
         vis.svg = vis.plotContainer.append("svg")
-            .attr("width", vis.width + vis.margin.left + vis.margin.right)
+            .attr("width", "100%")
             .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
-            .style("display", "block")  // Removes any extra space
-            .style("margin", "auto")    // Centers the SVG
+            .style("max-width", "100%")
+            .style("display", "block")
+            .style("margin", "auto")
             .append("g")
             .attr("transform", `translate(${vis.margin.left},${vis.margin.top})`);
 
-        console.log("Scatterplot Debug: SVG created");
+        // Initialize scales
+        vis.x = d3.scaleLinear().range([0, vis.width]);
+        vis.y = d3.scaleLinear().range([vis.height, 0]);
 
-        // Initialize scales with placeholder domains (will be updated in render)
-        vis.x = d3.scaleLinear()
-            .range([0, vis.width]);
-        vis.y = d3.scaleLinear()
-            .range([vis.height, 0]);
+        // Initialize axes
+        vis.xAxis = d3.axisBottom(vis.x).ticks(5).tickSize(10);
+        vis.yAxis = d3.axisLeft(vis.y).ticks(5).tickSize(10);
 
-        // Initialize axes with larger font size
-        vis.xAxis = d3.axisBottom(vis.x)
-            .ticks(5)
-            .tickSize(10);
-
-        vis.yAxis = d3.axisLeft(vis.y)
-            .ticks(5)
-            .tickSize(10);
-
-        // Add axes groups with updated styling
+        // Add axes groups
         vis.xAxisGroup = vis.svg.append("g")
             .attr("class", "x-axis")
             .attr("transform", `translate(0,${vis.height})`)
-            .style("font-size", "14px");  // Increased from default (usually 12px)
+            .style("font-size", "14px");
         
         vis.yAxisGroup = vis.svg.append("g")
             .attr("class", "y-axis")
-            .style("font-size", "14px");  // Increased from default (usually 12px)
+            .style("font-size", "14px");
 
-        // Add CSS styles for axis elements
-        const styleSheet = document.createElement("style");
-        styleSheet.textContent = `
-            .x-axis path,
-            .y-axis path,
-            .x-axis line,
-            .y-axis line {
-                stroke: ${vis.plotColors.darkGrey};
-            }
-            
-            .x-axis text,
-            .y-axis text {
-                fill: ${vis.plotColors.darkGrey};
-            }
-        `;
-        document.head.appendChild(styleSheet);
+        // Add axis labels
+        vis.svg.append("text")
+            .attr("class", "x-axis-label")
+            .attr("x", vis.width / 2)
+            .attr("y", vis.height + 40)
+            .style("text-anchor", "middle")
+            .text(vis.selectedVariables[1].label);
 
-        console.log("Scatterplot Debug: Plot initialized");
+        vis.svg.append("text")
+            .attr("class", "y-axis-label")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -vis.height / 2)
+            .attr("y", -60)
+            .style("text-anchor", "middle")
+            .text(vis.selectedVariables[0].label);
 
-        // Update circle radius
-        vis.circleRadius = 6;  // Increased from default size (likely 3 or 4)
+        // Add tooltip if it doesn't exist
+        if (!vis.plotTooltip) {
+            vis.plotTooltip = d3.select("body").append("div")
+                .attr("class", "plot-tooltip")
+                .style("opacity", 0)
+                .style("position", "absolute")
+                .style("background-color", "rgba(255, 255, 255, 0.9)")
+                .style("padding", "10px")
+                .style("border", "1px solid #ddd")
+                .style("border-radius", "4px")
+                .style("pointer-events", "none")
+                .style("font-size", "12px")
+                .style("box-shadow", "0 2px 4px rgba(0,0,0,0.1)")
+                .style("z-index", "10");
+        }
+
+        // Call render to draw the points
+        vis.render();
     }
 
     initYearSlider() {
@@ -566,6 +612,7 @@ class Scatterplot {
             );
         
         selectedLine
+            .raise()
             .style("stroke", "#3498db")
             .style("stroke-width", 7)
             .style("opacity", 1)
@@ -630,32 +677,88 @@ class Scatterplot {
         // Filter data for selected year
         const yearData = vis.data.filter(d => d.year === vis.selectedYear);
 
-        // Update points with transitions
+        // Update points
         const points = vis.svg.selectAll(".point")
             .data(yearData);
         
         // Exit
-        points.exit()
-            .transition()
-            .duration(1000)
-            .attr("r", 0)
-            .remove();
+        if (vis.isInitialRender) {
+            points.exit().remove();  // 初始渲染时直接移除
+        } else {
+            points.exit()  // 年份更新时使用过渡
+                .transition()
+                .duration(1000)
+                .attr("r", 0)
+                .remove();
+        }
         
-        // Enter
+        // Enter - add new points
         const pointsEnter = points.enter()
             .append("circle")
             .attr("class", "point")
             .attr("r", vis.circleRadius)
-            .attr("fill", "#3498db")
-            .attr("opacity", 0.6);
+            .attr("fill", vis.plotColors.lightBlue)
+            .style("cursor", "pointer");
         
         // Update + Enter
-        points.merge(pointsEnter)
-            .transition()
-            .duration(1000)
-            .attr("cx", d => vis.x(d[vis.selectedVariables[1].name]))
-            .attr("cy", d => vis.y(d[vis.selectedVariables[0].name]))
-            .attr("r", vis.circleRadius);
+        if (vis.isInitialRender) {
+            // 初始渲染时直接设置位置
+            points.merge(pointsEnter)
+                .attr("cx", d => vis.x(d[vis.selectedVariables[1].name]))
+                .attr("cy", d => vis.y(d[vis.selectedVariables[0].name]))
+                .attr("r", vis.circleRadius);
+            
+            // 初始渲染完成后更新标志
+            vis.isInitialRender = false;
+        } else {
+            // 年份更新时使用过渡动画
+            points.merge(pointsEnter)
+                .transition()
+                .duration(1000)
+                .attr("cx", d => vis.x(d[vis.selectedVariables[1].name]))
+                .attr("cy", d => vis.y(d[vis.selectedVariables[0].name]))
+                .attr("r", vis.circleRadius);
+        }
+
+        // Add interactive events (after transition)
+        vis.svg.selectAll(".point")
+            .on("mouseover", function(event, d) {
+                // 将当前元素移到最上层
+                this.parentNode.appendChild(this);
+                
+                d3.select(this)
+                    .attr("r", vis.circleRadius * 1.5)
+                    .attr("stroke", vis.plotColors.darkBlue)
+                    .attr("stroke-width", 2)
+                    .attr("fill", vis.plotColors.darkBlue);
+
+                // Show tooltip with university information
+                vis.plotTooltip
+                    .style("opacity", 1)
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px")
+                    .html(`
+                        <strong>${d.name}</strong><br>
+                        ${vis.selectedVariables[0].label}: ${d[vis.selectedVariables[0].name].toFixed(1)}<br>
+                        ${vis.selectedVariables[1].label}: ${d[vis.selectedVariables[1].name].toFixed(1)}
+                    `);
+            })
+            .on("mousemove", function(event) {
+                // Update tooltip position as mouse moves
+                vis.plotTooltip
+                    .style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 10) + "px");
+            })
+            .on("mouseout", function() {
+                d3.select(this)
+                    .attr("r", vis.circleRadius)
+                    .attr("stroke", null)  // 移除边界
+                    .attr("stroke-width", null)  // 移除边界宽度
+                    .attr("fill", vis.plotColors.lightBlue);
+
+                // Hide tooltip
+                vis.plotTooltip.style("opacity", 0);
+            });
 
         // Update axis labels with transition
         vis.svg.select(".x-axis-label")
@@ -670,6 +773,23 @@ class Scatterplot {
 
         // Update title
         vis.updateTitle();
+
+        // Update any font-family styles in the visualization
+        vis.svg.selectAll("text")
+            .style("font-family", "sans-serif");
+
+        vis.svg.select(".x-axis-label")
+            .style("font-family", "sans-serif");
+
+        vis.svg.select(".y-axis-label")
+            .style("font-family", "sans-serif");
+
+        // Update tooltip styles
+        vis.tooltip
+            .style("font-family", "sans-serif");
+
+        vis.plotTooltip
+            .style("font-family", "sans-serif");
     }
 
     // Add method to calculate axis domain
@@ -683,6 +803,98 @@ class Scatterplot {
         const minDomain = Math.floor(minValue / 10) * 10;
         
         return [minDomain, 100];
+    }
+
+    // 当切换变量时重置初始渲染标志
+    updateVariables(variables) {
+        this.selectedVariables = variables;
+        this.isInitialRender = true;  // 重置标志
+        this.render();
+    }
+
+    initHexagon() {
+        const vis = this;
+        
+        // Create hexagon container
+        const hexagonContainer = vis.leftPanel.append("div")
+            .attr("class", "hexagon-container")
+            .style("height", `${vis.hexagonHeight}px`)
+            .style("position", "relative");
+
+        // Create SVG for hexagon
+        const hexagonSvg = hexagonContainer.append("svg")
+            .attr("width", "100%")
+            .attr("height", "100%")
+            .style("display", "block");
+
+        // Create group for hexagon elements
+        const hexagonGroup = hexagonSvg.append("g")
+            .attr("transform", `translate(${vis.hexagonHeight/2}, ${vis.hexagonHeight/2})`);
+
+        // Calculate dimensions
+        const radius = vis.hexagonHeight * 0.35;
+        const centerX = 0;
+        const centerY = 0;
+        const angleStep = (2 * Math.PI) / vis.variables.length;
+
+        // Add lines (spokes)
+        const lines = hexagonGroup.selectAll("line")
+            .data(vis.variables)
+            .enter()
+            .append("line")
+            .attr("class", "spoke")
+            .attr("x1", centerX)
+            .attr("y1", centerY)
+            .attr("x2", (d, i) => centerX + radius * Math.cos(angleStep * i - Math.PI / 2))
+            .attr("y2", (d, i) => centerY + radius * Math.sin(angleStep * i - Math.PI / 2))
+            .style("stroke", "#999")
+            .style("stroke-width", 2)
+            .style("cursor", "pointer")
+            .style("transition", "stroke 0.3s ease, stroke-width 0.3s ease")
+            .on("mouseover", function() {
+                d3.select(this)
+                    .style("stroke", "#3498db")
+                    .style("stroke-width", 3);
+            })
+            .on("mouseout", function() {
+                d3.select(this)
+                    .style("stroke", "#999")
+                    .style("stroke-width", 2);
+            })
+            .on("click", handleLineClick);
+
+        // Add circles at vertices
+        const circles = hexagonGroup.selectAll("circle")
+            .data(vis.variables)
+            .enter()
+            .append("circle")
+            .attr("class", "vertex")
+            .attr("cx", (d, i) => centerX + radius * Math.cos(angleStep * i - Math.PI / 2))
+            .attr("cy", (d, i) => centerY + radius * Math.sin(angleStep * i - Math.PI / 2))
+            .attr("r", 8)
+            .style("fill", "#3498db")
+            .style("stroke", "white")
+            .style("stroke-width", 2);
+
+        // Add labels
+        const labels = hexagonGroup.selectAll("text")
+            .data(vis.variables)
+            .enter()
+            .append("text")
+            .attr("x", (d, i) => centerX + (radius + 20) * Math.cos(angleStep * i - Math.PI / 2))
+            .attr("y", (d, i) => centerY + (radius + 20) * Math.sin(angleStep * i - Math.PI / 2))
+            .style("text-anchor", "middle")
+            .style("dominant-baseline", "middle")
+            .style("font-size", "12px")
+            .text(d => d.label);
+
+        // Handle line click
+        function handleLineClick(event, d) {
+            if (vis.selectedVariables.length === 2) {
+                vis.selectedVariables = [d, vis.selectedVariables[0]];
+            }
+            vis.updateVis();
+        }
     }
 }
 
@@ -742,6 +954,10 @@ const styles = `
     .x-axis text,
     .y-axis text {
         transition: all 0.3s ease;
+    }
+
+    .spoke {
+        transition: stroke 0.3s ease, stroke-width 0.3s ease;
     }
 `;
 
