@@ -1750,11 +1750,10 @@ canvas {
 
 #scatterplot-chart {
     width: 100%;
-    height: 90vh;  /* 给图表足够的高度 */
+    height: 90vh;  
     position: relative;
 }
 
-/* 确保散点图的 SVG 元素可见 */
 #scatterplot-chart svg {
     width: 100%;
     height: 100%;
@@ -2229,6 +2228,19 @@ canvas {
 #page5-5 p strong {
     color: #cb181d;
     font-weight: 500;
+}
+
+/* Add cursor styles for line chart */
+.line {
+    cursor: pointer;
+}
+
+.line:hover {
+    cursor: grab;
+}
+
+.line:active {
+    cursor: grabbing;
 }
 
 
