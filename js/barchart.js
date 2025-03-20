@@ -43,24 +43,21 @@ class BarChart {
                     data: [],
                     backgroundColor: 'rgba(54, 162, 235, 0.8)',
                     borderColor: 'rgb(54, 162, 235)',
-                    borderWidth: 1,
-                    // Hover color changes
-                    hoverBackgroundColor: 'rgba(255, 99, 132, 1)',
-                    hoverBorderColor: 'rgb(255, 99, 132)'
+                    borderWidth: 1
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-    
-                // Change the mouse cursor on hover
+                
+                // Changes the mouse cursor on hover
                 onHover: (event, activeElements) => {
                     if (activeElements.length > 0) {
                         // Mouse is over a bar
                         const index = activeElements[0].index;
                         const dataAtIndex = this.currentUniversities[index];
                         console.log('Hovering over:', dataAtIndex);
-    
+        
                         // Change cursor to pointer
                         event.native.target.style.cursor = 'pointer';
                     } else {
@@ -68,7 +65,7 @@ class BarChart {
                         event.native.target.style.cursor = 'default';
                     }
                 },
-    
+        
                 // Handle clicks on a bar
                 onClick: (event, elements) => {
                     if (elements.length > 0) {
@@ -80,7 +77,7 @@ class BarChart {
                         }));
                     }
                 },
-    
+        
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -101,7 +98,6 @@ class BarChart {
                         }
                     }
                 },
-    
                 plugins: {
                     title: {
                         display: true,
@@ -110,14 +106,21 @@ class BarChart {
                         font: {
                             size: 19
                         }
+                    },
+                    // Disable dataset toggling on legend click
+                    legend: {
+                        display: true,
+                        onClick: (evt, legendItem, legend) => {
+                            // Do nothing here so the dataset stays visible
+                        }
                     }
                 }
             }
         });
-    
         
-        console.log('BarChart: Chart initialized');
-    }
+        console.log('BarChart: Chart initialized');}
+        
+
 
     updateRangeFilter(totalUniversities) {
         console.log(`BarChart: Updating range filter for ${totalUniversities} universities`);
