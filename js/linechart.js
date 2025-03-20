@@ -384,13 +384,13 @@ class LineChart {
             .attr("y", 9)
             .text(d => `${d.name} (Rank: ${d.values[d.values.length-1].rank})`)
             .style("font-size", "12px")
-            .style("cursor", "pointer")
-            .on("click", (event, d) => vis.handleLineClick(null, d));
+            .style("cursor", "default");
 
         // Update existing legend positions
         legend.attr("transform", (d, i) => `translate(${legendX},${legendY + i * 20})`);
         legend.select("text")
-            .text(d => `${d.name} (Rank: ${d.values[d.values.length-1].rank})`);
+            .text(d => `${d.name} (Rank: ${d.values[d.values.length-1].rank})`)
+            .style("cursor", "default");
 
         legend.exit().remove();
     }
