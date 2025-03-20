@@ -41,14 +41,54 @@ class BarChart {
                 datasets: [{
                     label: 'Overall Score',
                     data: [],
-                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                    borderColor: 'rgb(54, 162, 235)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 0.6)',
+                    borderWidth: 1,
+                    hoverBackgroundColor: 'rgb(54, 162, 235)',
+                    hoverBorderColor: 'rgb(54, 162, 235)',
+                    hoverBorderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    duration: 150
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true,
+                    animationDuration: 150
+                },
+                
+                // Changes the mouse cursor on hover
+                onHover: (event, activeElements) => {
+                    if (activeElements.length > 0) {
+                        // Mouse is over a bar
+                        const index = activeElements[0].index;
+                        const dataAtIndex = this.currentUniversities[index];
+                        console.log('Hovering over:', dataAtIndex);
+        
+                        // Change cursor to pointer
+                        event.native.target.style.cursor = 'pointer';
+                    } else {
+                        // Mouse not over any bar
+                        event.native.target.style.cursor = 'default';
+                    }
+                },
+        
+                // Handle clicks on a bar
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const universityData = this.currentUniversities[index];
+                        console.log('BarChart: Selected university:', universityData);
+                        document.dispatchEvent(new CustomEvent('universitySelected', {
+                            detail: universityData
+                        }));
+                    }
+                },
+        
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -73,24 +113,25 @@ class BarChart {
                     title: {
                         display: true,
                         text: 'Top Universities by Overall Score',
-                        padding: 20
-                    }
-                },
-                onClick: (event, elements) => {
-                    if (elements.length > 0) {
-                        const index = elements[0].index;
-                        const universityData = this.currentUniversities[index];
-                        console.log('BarChart: Selected university:', universityData);
-                        document.dispatchEvent(new CustomEvent('universitySelected', {
-                            detail: universityData
-                        }));
+                        padding: 20,
+                        font: {
+                            size: 19
+                        }
+                    },
+                    // Disable dataset toggling on legend click
+                    legend: {
+                        display: true,
+                        onClick: (evt, legendItem, legend) => {
+                            // Do nothing here so the dataset stays visible
+                        }
                     }
                 }
             }
         });
         
-        console.log('BarChart: Chart initialized');
-    }
+        console.log('BarChart: Chart initialized');}
+        
+
 
     updateRangeFilter(totalUniversities) {
         console.log(`BarChart: Updating range filter for ${totalUniversities} universities`);
@@ -176,7 +217,7 @@ class BarChart {
         console.log(`BarChart: Updated data:`, this.chart.data.datasets[0].data);
         
         // Update chart title
-        this.chart.options.plugins.title.text = `Top Universities in ${this.selectedCountry}`;
+        
         
         this.chart.update();
 

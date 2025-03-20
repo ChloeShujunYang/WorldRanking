@@ -61,7 +61,10 @@ class RadarChart {
                     title: {
                         display: true,
                         text: 'University Performance Metrics',
-                        padding: 20
+                        padding: 20,
+                        font: {
+                            size: 24,
+                        }
                     },
                     legend: {
                         display: true,

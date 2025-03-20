@@ -60,16 +60,44 @@ class Scatterplot {
         const containerElement = document.getElementById(vis.containerId);
         containerElement.innerHTML = '';
         
-        // Create main container with equal-width panels
+        // Set fixed dimensions for the container
+        const fixedWidth = 1920;
+        const fixedHeight = 1080;
+        
+        // First, remove any existing title to prevent duplicates
+        d3.select("#page6 .content-wrapper .main-title").remove();
+        
+        // Create page title (stays at top)
+        const pageTitle = d3.select("#page6 .content-wrapper")
+            .insert("h1", ":first-child")
+            .attr("class", "main-title")
+            .style("font-size", "42px")
+            .style("position", "absolute")
+            .style("top", "20px")
+            .style("left", "50%")
+            .style("transform", "translateX(-50%)")
+            .style("margin", "0")
+            .style("text-align", "center")
+            .style("width", "100%")
+            .style("z-index", "1000")
+            .text(`${vis.selectedVariables[1].label} vs. ${vis.selectedVariables[0].label} (${vis.selectedYear})`);
+
+        // Store the page title reference
+        vis.pageTitle = pageTitle;
+
+        // Create main container with fixed width and centering
         const container = d3.select("#" + vis.containerId)
             .style("display", "grid")
-            .style("grid-template-columns", "42% 58%") 
-            .style("width", "100%")
-            .style("height", "100vh")
+            .style("grid-template-columns", "42% 58%")
+            .style("width", `${fixedWidth}px`)
+            .style("height", `${fixedHeight}px`)
             .style("gap", "20px")
-            .style("padding", "20px");
-
-        console.log("Scatterplot Debug: Main container created");
+            .style("padding", "20px")
+            .style("position", "relative")
+            .style("left", "50%")
+            .style("transform", "translateX(-48%)")
+            .style("margin", "50px auto 0")
+            .style("margin-top", "50px");
 
         // Left panel container (for hexagon and slider)
         const leftPanel = container.append("div")
@@ -86,13 +114,27 @@ class Scatterplot {
         // Add single title for both metrics and year selection
         leftPanel.append("h2")
             .attr("class", "hexagon-title")
+            .style("text-align", "center")
+            .style("margin-bottom", "10px")
             .style("opacity", "0")  // Start hidden
+            .style("font-size", "18px")
+            .style("color", "#4a4a4a")
             .text("Select Metrics and Year");
+
+        // Add instruction text
+        leftPanel.append("p")
+            .attr("class", "hexagon-instruction")
+            .style("text-align", "center")
+            .style("margin", "0 0 20px 0")
+            .style("font-size", "18px")
+            .style("color", "#666")
+            .style("font-style", "italic")
+            .text("Click any line to explore the relationship between two scores");
 
         // Add hexagon container
         vis.hexagonContainer = leftPanel.append("div")
             .attr("class", "hexagon-container")
-            .style("height", `${hexagonHeight}px`)  // Set specific height
+            .style("height", `${hexagonHeight}px`)
             .style("display", "flex")
             .style("justify-content", "center")
             .style("align-items", "center");
@@ -214,7 +256,7 @@ class Scatterplot {
             }
         }
 
-        // Draw lines in the bottom layer
+        // Draw lines in the bottom layer with cursor pointer
         vis.linesGroup.selectAll(".variable-line")
             .data(vis.lines)
             .join("line")
@@ -226,6 +268,7 @@ class Scatterplot {
             .style("stroke", "#cccccc")
             .style("stroke-width", 5)
             .style("opacity", 0.5)
+            .style("cursor", "pointer")
             .on("click", function(event, d) {
                 vis.selectVariables(d.variables);
             });
@@ -418,35 +461,6 @@ class Scatterplot {
             .attr("class", "y-axis")
             .style("font-size", "14px");  // Increased from default (usually 12px)
 
-        // Add axis labels with updated font size
-        vis.svg.append("text")
-            .attr("class", "x-axis-label")
-            .attr("x", vis.width / 2)
-            .attr("y", vis.height + 45)  // Increased from 35 to 45 to move label lower
-            .style("text-anchor", "middle")
-            .style("fill", "#4a4a4a")
-            .style("font-size", "18px")
-            .text("X-Axis Label");
-
-        vis.svg.append("text")
-            .attr("class", "y-axis-label")
-            .attr("transform", "rotate(-90)")
-            .attr("x", -vis.height / 2)
-            .attr("y", -45)
-            .style("text-anchor", "middle")
-            .style("fill", "#4a4a4a")
-            .style("font-size", "18px")  // Increased from default
-            .text("Y-Axis Label");
-
-        // Add title with updated positioning
-        vis.title = vis.svg.append("text")
-            .attr("class", "plot-title")
-            .attr("x", vis.width / 2)
-            .attr("y", -50)  // Changed from -20 to -50 to increase spacing between title and plot
-            .attr("text-anchor", "middle")
-            .style("fill", "#4a4a4a")
-            .style("font-weight", "bold");
-
         // Add CSS styles for axis elements
         const styleSheet = document.createElement("style");
         styleSheet.textContent = `
@@ -583,7 +597,8 @@ class Scatterplot {
 
     updateTitle() {
         const vis = this;
-        vis.title
+        // Use the existing title element
+        d3.select("#page6 .content-wrapper .main-title")
             .transition()
             .duration(1000)
             .text(`${vis.selectedVariables[1].label} vs. ${vis.selectedVariables[0].label} (${vis.selectedYear})`);
