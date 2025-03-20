@@ -113,9 +113,15 @@ class BarChart {
                     title: {
                         display: true,
                         text: 'Top Universities by Overall Score',
-                        padding: 20,
                         font: {
-                            size: 19
+                            family: 'Open Sans, sans-serif',
+                            size: 24,
+                            weight: 'bold'
+                        },
+                        color: '#000509',
+                        padding: {
+                            top: 10,
+                            bottom: 10
                         }
                     },
                     // Disable dataset toggling on legend click
@@ -206,10 +212,10 @@ class BarChart {
         const [start, end] = this.selectedRange.split('-').map(Number);
         this.currentUniversities = universities.slice(start - 1, end); // Ensure this does not exceed the length of universities
 
-        console.log(`BarChart: Displaying universities from rank ${start} to ${end}:`, this.currentUniversities.map(u => u.name));
+        console.log(`BarChart: Displaying universities from rank ${start} to ${end}:`, this.currentUniversities.map(u => u.aliases || u.name));
 
         // Update chart data
-        this.chart.data.labels = this.currentUniversities.map(u => u.name);
+        this.chart.data.labels = this.currentUniversities.map(u => u.aliases || u.name);
         this.chart.data.datasets[0].data = this.currentUniversities.map(u => u.scores_overall);
         
         // Log updated chart data

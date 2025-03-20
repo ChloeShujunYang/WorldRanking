@@ -280,49 +280,49 @@ class LineChart {
 
     updateVis() {
         const vis = this;
-
-        // 计算当前显示数据的最小值和最大值
+    
+        // Compute min and max values for Y-axis
         const yMin = d3.min(vis.displayData, d => d3.min(d.values, v => v.score));
         const yMax = d3.max(vis.displayData, d => d3.max(d.values, v => v.score));
         
-        // 添加一些边距，使图表更美观
-        const padding = (yMax - yMin) * 0.1;  // 10% 的边距
-        
-        // 更新 y 轴的范围
+        // Add padding to make the graph visually clear
+        const padding = (yMax - yMin) * 0.1;  // 10% padding
+    
+        // Update y-axis range
         vis.y.domain([
-            Math.max(0, yMin - padding),  // 确保最小值不小于 0
-            Math.min(100, yMax + padding)  // 确保最大值不超过 100
+            Math.max(0, yMin - padding),  // Ensure min value doesn't go below 0
+            Math.min(100, yMax + padding)  // Ensure max value doesn't exceed 100
         ]);
-
-        // 更新 y 轴
+    
+        // Update y-axis with transition effect
         vis.yAxis.transition()
-            .duration(1000)  // 添加过渡动画
+            .duration(1000)
             .call(d3.axisLeft(vis.y));
-
-        // Update scales
+    
+        // Update x-axis range
         vis.x.domain([
             d3.min(vis.displayData, d => d3.min(d.values, v => v.year)),
             d3.max(vis.displayData, d => d3.max(d.values, v => v.year))
         ]);
-
-        // Update axes
+    
+        // Update x-axis
         vis.xAxis.call(d3.axisBottom(vis.x).tickFormat(d3.format("d")));
-
+    
         // Create line generator
         const line = d3.line()
             .x(d => vis.x(d.year))
             .y(d => vis.y(d.score));
-
+    
         // Update lines
         const lines = vis.svg.selectAll(".line")
             .data(vis.displayData, d => d.name);
-
+    
         // Enter
         const linesEnter = lines.enter()
             .append("path")
             .attr("class", "line");
-
-        // Update + Enter
+    
+        // Merge + Update
         lines.merge(linesEnter)
             .attr("d", d => line(d.values))
             .attr("fill", "none")
@@ -357,43 +357,76 @@ class LineChart {
             .on("click", function(event, d) {
                 vis.handleLineClick(this, d);
             });
-
+    
         // Exit
         lines.exit().remove();
-
-        // Update legend
-        const legendX = vis.width + 10;
+    
+        // Update legend positioning
+        const legendX = vis.width + 20;  // Adjusted to prevent cutoff
         const legendY = 0;
-
+    
         const legend = vis.svg.selectAll(".legend")
             .data(vis.displayData, d => d.name);
-
+    
         const legendEnter = legend.enter()
             .append("g")
             .attr("class", "legend")
-            .attr("transform", (d, i) => `translate(${legendX},${legendY + i * 20})`);
-
+            .attr("transform", (d, i) => `translate(${legendX},${legendY + i * 40})`);
+    
         legendEnter.append("rect")
-            .attr("x", 0)
+            // .attr("x", 0)
             .attr("width", 10)
             .attr("height", 10)
-            .attr("fill", (d, i) => d3.schemeCategory10[i % 10]);
-
+            .attr("fill", (d, i) => d3.schemeCategory10[i % 10])
+            .attr("y", 5);
+    
+        // **Auto-wrap long legend text**
         legendEnter.append("text")
             .attr("x", 15)
             .attr("y", 9)
-            .text(d => `${d.name} (Rank: ${d.values[d.values.length-1].rank})`)
+            .attr("dy", ".35em")
             .style("font-size", "12px")
-            .style("cursor", "default");
-
+            .style("cursor", "default")
+            .each(function(d) {
+                const text = d3.select(this);
+                
+                // Add university name
+                text.append("tspan")
+                    .attr("x", 15)
+                    .text(d.name);
+                
+                // Add rank on new line
+                text.append("tspan")
+                    .attr("x", 15)
+                    .attr("dy", "1.2em")
+                    .style("fill", "#666")  // Slightly lighter color for the rank
+                    .text(`Rank: ${d.values[d.values.length-1].rank}`);
+            });
+    
         // Update existing legend positions
-        legend.attr("transform", (d, i) => `translate(${legendX},${legendY + i * 20})`);
-        legend.select("text")
-            .text(d => `${d.name} (Rank: ${d.values[d.values.length-1].rank})`)
-            .style("cursor", "default");
-
+        legend.attr("transform", (d, i) => `translate(${legendX},${legendY + i * 30})`);
+        legend.select("text").each(function(d) {
+            const text = d3.select(this);
+            
+            // Clear existing content
+            text.selectAll("*").remove();
+            
+            // Add university name
+            text.append("tspan")
+                .attr("x", 15)
+                .text(d.name);
+            
+            // Add rank on new line
+            text.append("tspan")
+                .attr("x", 15)
+                .attr("dy", "1.2em")
+                .style("fill", "#666")
+                .text(`Rank: ${d.values[d.values.length-1].rank}`);
+        });
+    
         legend.exit().remove();
     }
+    
 
     handleLineClick(element, data) {
         const vis = this;

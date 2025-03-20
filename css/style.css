@@ -6,11 +6,11 @@
 }
 
 /* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap');
 
 /* Global font settings */
 body {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     overflow: hidden;
 }
 
@@ -305,7 +305,7 @@ html, body {
 
 /* Title styles */
 .main-title {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     text-align: center;
     font-size: 2.5rem;
@@ -314,7 +314,7 @@ html, body {
 }
 
 .subtitle {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 48px;
     line-height: 1.2;
     color: #333;
@@ -391,7 +391,7 @@ html, body {
 }
 
 .intro-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 42px;
     color: #2c3e50;
     margin-bottom: 30px;
@@ -414,7 +414,7 @@ html, body {
 }
 
 .intro-text {
-    font-family: 'Lora', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 20px;
     line-height: 1.8;
     color: #34495e;
@@ -679,7 +679,7 @@ html, body {
 }
 
 #page4 .main-title {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.5rem;
     color: #333;
     text-align: center;
@@ -1114,7 +1114,7 @@ html, body {
 
 /* Title styles */
 .main-title {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     text-align: center;
     font-size: 2.5rem;
@@ -1130,7 +1130,7 @@ html, body {
 }
 
 #page4 .main-title {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.5rem;
     color: #333;
     text-align: center;
@@ -1273,7 +1273,7 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 #page3 {
@@ -1281,7 +1281,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #page4 {
-    background-color: #f8f9fa;
+    background-color: #ffffff;
 }
 
 /* Content wrapper styles for full-screen effect on pages 4, 5, and 6 */
@@ -1505,7 +1505,7 @@ canvas {
 }
 
 .panel-title {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     margin-top: 0;
     margin-bottom: 15px;
@@ -1696,7 +1696,7 @@ canvas {
 }
 
 .panel-title {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     margin-top: 0;
     margin-bottom: 15px;
@@ -1774,8 +1774,8 @@ canvas {
 #timeline-chart {
     position: relative;
     width: 100%;
-    height: 100%;
-    display: flex;
+    height: 600px; /* Adjust this value as needed */
+    margin: 20px 0;
 }
 
 .timeline-controls {
@@ -1855,7 +1855,7 @@ canvas {
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: white;
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     z-index: 10;
 }
 
@@ -1871,17 +1871,17 @@ canvas {
 }
 
 .chart-title, .x-axis-label, .y-axis-label {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-weight: 700;
 }
 
 .x-axis text, .y-axis text {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 12px;
 }
 
 .legend text {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 12px;
     alignment-baseline: middle;
 }
@@ -1891,11 +1891,11 @@ canvas {
     border-left: 1px solid #eee;
     padding: 0;
     overflow-y: auto;
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .university-info h2 {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     margin-bottom: 20px;
     padding-bottom: 10px;
@@ -1903,7 +1903,7 @@ canvas {
 }
 
 .university-info h3 {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     margin: 20px 0 15px;
 }
@@ -2005,7 +2005,7 @@ canvas {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: sans-serif; /* Using serif font to match the image */
+    font-family: 'Open Sans', sans-serif;
 }
 
 #page6\.5 .content-wrapper {
@@ -2027,7 +2027,7 @@ canvas {
     color: #333;
     margin-bottom: 30px;
     font-weight: 600; /* Increased font weight to match image */
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     line-height: 1.2;
 }
 
@@ -2038,7 +2038,7 @@ canvas {
     text-align: justify;
     margin-bottom: 40px;
     font-weight: 500; /* Increased font weight to match image */
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .conclusion-question {
@@ -2048,7 +2048,7 @@ canvas {
     text-align: center;
     margin-bottom: 40px;
     font-weight: 500; /* Increased font weight to match image */
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .conclusion-insight {
@@ -2057,7 +2057,7 @@ canvas {
     color: #333;
     text-align: center;
     font-weight: 500; /* Increased font weight to match image */
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .highlight-text {
@@ -2089,7 +2089,7 @@ canvas {
 }
 
 #page3-5 h2 {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.8rem;
     color: #000102;
     margin-bottom: 30px;
@@ -2166,7 +2166,7 @@ canvas {
 }
 
 #page4-5 h2 {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.4rem;
     color: #000509;
     margin-bottom: 30px;
@@ -2216,7 +2216,7 @@ canvas {
 }
 
 #page5-5 h2 {
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.4rem;
     color: #000509;
     margin-bottom: 30px;
@@ -2259,7 +2259,7 @@ canvas {
 .custom-dropdown {
     position: relative;
     width: 160px;
-    font-family: sans-serif;
+    font-family: 'Open Sans', sans-serif;
     margin-bottom: 15px;
     margin-left: 10px;
 }
@@ -2362,15 +2362,13 @@ canvas {
     background: #999;
 }
 
-/* 确保所有图表容器也不会溢出 */
-#worldmap-chart,
-#line-chart,
-#scatterplot-chart,
-#bar-chart-container,
-#radar-chart-container {
+/* Update the selector */
+#conclusion {
     width: 100%;
-    max-width: 100%;
-    overflow: hidden;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 

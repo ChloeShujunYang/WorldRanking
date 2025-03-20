@@ -29,7 +29,8 @@ Promise.all(promises)
             scores_international_outlook: +d.scores_international_outlook || 0,
             scores_industry_income: +d.scores_industry_income || 0,
             scores_research: +d.scores_research || 0,
-            scores_citations: +d.scores_citations || 0
+            scores_citations: +d.scores_citations || 0,
+            aliases: d.aliases
         }));
 
         // Initialize visualization instances
@@ -128,6 +129,13 @@ function createVis(data) {
     // (4) Set up page navigation and intersection observer
     setupPageNavigation();
     setupIntersectionObserver();
+
+    // If there are any references to scatterplot-chart, update them to conclusion
+    // Example:
+    if (document.querySelector("#conclusion")) {
+        // Initialize conclusion page
+        new ConclusionPage();
+    }
 }
 
 /**
