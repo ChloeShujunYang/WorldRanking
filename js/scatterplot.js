@@ -424,7 +424,7 @@ class Scatterplot {
         // Update the plot colors to include a darker, translucent blue
         vis.plotColors = {
             darkGrey: "#4a4a4a",
-            lightBlue: "rgba(52, 152, 219, 0.6)",  // Changed to darker blue with 0.6 opacity
+            lightBlue: "rgba(52, 152, 219, 0.3)",  // Changed opacity from 0.6 to 0.3
             darkBlue: "#3498db"
         };
 
@@ -712,14 +712,16 @@ class Scatterplot {
         // Add interactive events (after transition)
         vis.svg.selectAll(".point")
             .on("mouseover", function(event, d) {
-                // 将当前元素移到最上层
+                // Bring element to front
                 this.parentNode.appendChild(this);
                 
                 d3.select(this)
+                    .transition()
+                    .duration(200)
                     .attr("r", vis.circleRadius * 1.5)
-                    .attr("stroke", vis.plotColors.darkBlue)
-                    .attr("stroke-width", 2)
-                    .attr("fill", vis.plotColors.darkBlue);
+                    .attr("fill", "#2980b9")  // Darker blue, fully opaque
+                    .attr("stroke", "#add8e6")  // Light blue border
+                    .attr("stroke-width", 2);
 
                 // Show tooltip with university information
                 vis.plotTooltip
@@ -740,10 +742,12 @@ class Scatterplot {
             })
             .on("mouseout", function() {
                 d3.select(this)
+                    .transition()
+                    .duration(200)
                     .attr("r", vis.circleRadius)
-                    .attr("stroke", null)  // 移除边界
-                    .attr("stroke-width", null)  // 移除边界宽度
-                    .attr("fill", vis.plotColors.lightBlue);
+                    .attr("fill", vis.plotColors.lightBlue)  // Return to original translucent color
+                    .attr("stroke", null)  // Remove border
+                    .attr("stroke-width", null);
 
                 // Hide tooltip
                 vis.plotTooltip.style("opacity", 0);
