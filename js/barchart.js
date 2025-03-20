@@ -73,7 +73,10 @@ class BarChart {
                     title: {
                         display: true,
                         text: 'Top Universities by Overall Score',
-                        padding: 20
+                        padding: 20,
+                        font: {
+                            size: 19
+                        }
                     }
                 },
                 onClick: (event, elements) => {
@@ -176,7 +179,7 @@ class BarChart {
         console.log(`BarChart: Updated data:`, this.chart.data.datasets[0].data);
         
         // Update chart title
-        this.chart.options.plugins.title.text = `Top Universities in ${this.selectedCountry}`;
+        
         
         this.chart.update();
 
