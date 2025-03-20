@@ -664,7 +664,7 @@ html, body {
 #page4 .content-wrapper {
     position: relative;
     height: 100vh;
-    padding: 0 20px;
+    padding: 20px 300px 0px 300px !important;
     display: flex;
     flex-direction: column;
 }
@@ -702,8 +702,11 @@ html, body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 10px;  /* 进一步减少图表间距 */
-    margin-top: -10px;  /* 图表容器也往上移 */
+    /* gap: 10px;*/  /* 进一步减少图表间距 */
+    margin-top: 20px;  /* 图表容器也往上移 */
+    margin-right: 300px;
+    height: 700px;
+    width: 350px;
 }
 
 #radar-chart-container, #bar-chart-container {
@@ -1303,7 +1306,7 @@ h1, h2, h3, h4, h5, h6 {
 
 #radar-chart-container, #bar-chart-container {
     flex: 1;
-    margin: 10px;
+    margin: 0px 10px;
 }
 
 canvas {
@@ -1386,6 +1389,8 @@ canvas {
     position: relative;
     overflow: hidden;
     margin: 0; /* Remove margin to reduce white space */
+    display: flex;
+    justify-content: center;
 }
 
 /* Adjust the title for the worldmap page */
@@ -1583,7 +1588,7 @@ canvas {
     flex: 1;
     position: relative;
     min-height: 300px;
-    margin: 10px;
+    margin: 0px 10px;
 }
 
 #bar-chart-container {
@@ -1740,6 +1745,7 @@ canvas {
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    margin: 0px 200px;
 }
 
 #scatterplot-chart {
