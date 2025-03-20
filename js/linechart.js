@@ -384,49 +384,45 @@ class LineChart {
         legendEnter.append("text")
             .attr("x", 15)
             .attr("y", 9)
-            .attr("dy", "1.2em")
+            .attr("dy", ".35em")
             .style("font-size", "12px")
             .style("cursor", "default")
             .each(function(d) {
-                const maxLineWidth = 300; // Maximum width before wrapping
-                const text = `${d.name} (Rank: ${d.values[d.values.length-1].rank})`;
-                // 关键修改：优先保持"Rank"部分不换行
-                const preservedPhrase = "(Rank:";
-                const splitIndex = content.lastIndexOf(preservedPhrase);
-                const words = text.split(/(?=\s)/);
-                let line = [];
-                let tspan = d3.select(this)
-                    .append("tspan")
+                const text = d3.select(this);
+                
+                // Add university name
+                text.append("tspan")
                     .attr("x", 15)
-                    .attr("dy", "0");
-    
-                words.forEach(word => {
-                    line.push(word);
-                    tspan.text(line.join(" "));
-                    
-                    // Check if text width exceeds maxLineWidth
-                    if (this.getComputedTextLength() > maxLineWidth) {
-                        line.pop();  // Remove last word from the current line
-                        tspan.text(line.join(" ")); // Set final text for the line
-                        
-                        // Create a new line for the next words
-                        line = [word];
-                        tspan = d3.select(this)
-                            .append("tspan")
-                            .attr("x", 15)
-                            .attr("dy", "1.2em"); // Line spacing
-                    }
-                });
-    
-                // Set last line
-                tspan.text(line.join(""));
+                    .text(d.name);
+                
+                // Add rank on new line
+                text.append("tspan")
+                    .attr("x", 15)
+                    .attr("dy", "1.2em")
+                    .style("fill", "#666")  // Slightly lighter color for the rank
+                    .text(`Rank: ${d.values[d.values.length-1].rank}`);
             });
     
         // Update existing legend positions
         legend.attr("transform", (d, i) => `translate(${legendX},${legendY + i * 30})`);
-        legend.select("text")
-            .text(d => `${d.name} (Rank: ${d.values[d.values.length-1].rank})`)
-            .style("cursor", "default");
+        legend.select("text").each(function(d) {
+            const text = d3.select(this);
+            
+            // Clear existing content
+            text.selectAll("*").remove();
+            
+            // Add university name
+            text.append("tspan")
+                .attr("x", 15)
+                .text(d.name);
+            
+            // Add rank on new line
+            text.append("tspan")
+                .attr("x", 15)
+                .attr("dy", "1.2em")
+                .style("fill", "#666")
+                .text(`Rank: ${d.values[d.values.length-1].rank}`);
+        });
     
         legend.exit().remove();
     }
