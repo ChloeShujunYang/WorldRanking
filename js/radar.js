@@ -74,7 +74,8 @@ class RadarChart {
                     },
                     legend: {
                         display: true,
-                        position: 'top'
+                        position: 'top',
+                        onClick:(evt, legendItem, legend)=> {}
                     },
                     tooltip: {
                         callbacks: {
