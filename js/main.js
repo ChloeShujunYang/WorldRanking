@@ -125,6 +125,13 @@ function createVis(data) {
     // (4) Set up page navigation and intersection observer
     setupPageNavigation();
     setupIntersectionObserver();
+
+    // If there are any references to scatterplot-chart, update them to conclusion
+    // Example:
+    if (document.querySelector("#conclusion")) {
+        // Initialize conclusion page
+        new ConclusionPage();
+    }
 }
 
 /**

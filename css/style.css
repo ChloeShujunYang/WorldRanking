@@ -1993,7 +1993,7 @@ canvas {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: serif; /* Using serif font to match the image */
+    font-family: 'Open Sans', sans-serif;
 }
 
 #page6\.5 .content-wrapper {
@@ -2015,7 +2015,7 @@ canvas {
     color: #333;
     margin-bottom: 30px;
     font-weight: 600; /* Increased font weight to match image */
-    font-family: serif;
+    font-family: 'Open Sans', sans-serif;
     line-height: 1.2;
 }
 
@@ -2026,7 +2026,7 @@ canvas {
     text-align: justify;
     margin-bottom: 40px;
     font-weight: 500; /* Increased font weight to match image */
-    font-family: serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .conclusion-question {
@@ -2036,7 +2036,7 @@ canvas {
     text-align: center;
     margin-bottom: 40px;
     font-weight: 500; /* Increased font weight to match image */
-    font-family: serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .conclusion-insight {
@@ -2045,7 +2045,7 @@ canvas {
     color: #333;
     text-align: center;
     font-weight: 500; /* Increased font weight to match image */
-    font-family: serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .highlight-text {
@@ -2348,6 +2348,15 @@ canvas {
 
 .dropdown-menu::-webkit-scrollbar-thumb:hover {
     background: #999;
+}
+
+/* Update the selector */
+#conclusion {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 

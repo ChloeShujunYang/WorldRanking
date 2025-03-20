@@ -10,8 +10,8 @@ class ConclusionPage {
     }
 
     initConclusionPage() {
-        // Select the conclusion page content wrapper
-        const conclusionWrapper = d3.select("#page6\\.5 .content-wrapper");
+        // Select the conclusion page content wrapper with updated ID
+        const conclusionWrapper = d3.select("#conclusion");
         
         // Clear any existing content
         conclusionWrapper.html("");
