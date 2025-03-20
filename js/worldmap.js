@@ -123,8 +123,9 @@ class WorldMap {
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
             .attr("height", vis.height + vis.margin.top + vis.margin.bottom)
             .append("g")
-            .attr("transform", `translate(${vis.margin.left}, ${vis.margin.top})`);
-        
+            .attr("transform", `translate(130, 20)`);
+
+    
         // Create tooltip
         vis.tooltip = d3.select("#worldmap-tooltip");
         

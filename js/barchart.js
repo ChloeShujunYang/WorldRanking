@@ -49,6 +49,20 @@ class BarChart {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                onHover: (event, activeElements) => {
+                    if (activeElements.length > 0) {
+                      // Mouse is over a bar
+                      const index = activeElements[0].index;
+                      const dataAtIndex = this.currentUniversities[index];
+                      console.log('Hovering over:', dataAtIndex);
+                      // You could change the cursor:
+                      event.native.target.style.cursor = 'pointer';
+                      // Or do custom highlight logic
+                    } else {
+                      // Mouse not over any bar
+                      event.native.target.style.cursor = 'default';
+                    }
+                  },
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -73,7 +87,10 @@ class BarChart {
                     title: {
                         display: true,
                         text: 'Top Universities by Overall Score',
-                        padding: 20
+                        padding: 20,
+                        font: {
+                            size: 19
+                        }
                     }
                 },
                 onClick: (event, elements) => {
@@ -176,7 +193,7 @@ class BarChart {
         console.log(`BarChart: Updated data:`, this.chart.data.datasets[0].data);
         
         // Update chart title
-        this.chart.options.plugins.title.text = `Top Universities in ${this.selectedCountry}`;
+        
         
         this.chart.update();
 
