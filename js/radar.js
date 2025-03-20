@@ -61,9 +61,15 @@ class RadarChart {
                     title: {
                         display: true,
                         text: 'University Performance Metrics',
-                        padding: 20,
                         font: {
+                            family: 'Open Sans, sans-serif',
                             size: 24,
+                            weight: 'bold'
+                        },
+                        color: '#000509',
+                        padding: {
+                            top: 10,
+                            bottom: 10
                         }
                     },
                     legend: {
@@ -124,7 +130,14 @@ class RadarChart {
             return;
         }
 
-        this.chart.data.datasets[0].label = universityData.name;
+        // Update university name in the title
+        const universityNameElement = document.querySelector('.university-name');
+        if (universityNameElement) {
+            universityNameElement.textContent = universityData.aliases || universityData.name;
+        }
+
+        // Use aliases for the dataset label
+        this.chart.data.datasets[0].label = universityData.aliases || universityData.name;
         this.chart.data.datasets[0].data = [
             universityData.scores_overall,
             universityData.scores_teaching,
@@ -133,11 +146,8 @@ class RadarChart {
             universityData.scores_industry_income,
             universityData.scores_international_outlook
         ];
-
-        // Update chart title
-        this.chart.options.plugins.title.text = `Performance Metrics: ${universityData.name}`;
         
         this.chart.update();
-        console.log('RadarChart: Chart updated');
+        console.log('RadarChart: Chart updated with alias:', universityData.aliases);
     }
 } 

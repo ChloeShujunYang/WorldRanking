@@ -6,11 +6,11 @@
 }
 
 /* Import Google Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Lora:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;700&display=swap');
 
 /* Global font settings */
 body {
-    font-family: 'Lora', serif;
+    font-family: 'Open Sans', sans-serif;
     overflow: hidden;
 }
 
@@ -296,7 +296,7 @@ html, body {
 
 /* Title styles */
 .main-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     text-align: center;
     font-size: 2.5rem;
@@ -305,7 +305,7 @@ html, body {
 }
 
 .subtitle {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 48px;
     line-height: 1.2;
     color: #333;
@@ -382,7 +382,7 @@ html, body {
 }
 
 .intro-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 42px;
     color: #2c3e50;
     margin-bottom: 30px;
@@ -405,7 +405,7 @@ html, body {
 }
 
 .intro-text {
-    font-family: 'Lora', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 20px;
     line-height: 1.8;
     color: #34495e;
@@ -670,7 +670,7 @@ html, body {
 }
 
 #page4 .main-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.5rem;
     color: #333;
     text-align: center;
@@ -1102,7 +1102,7 @@ html, body {
 
 /* Title styles */
 .main-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     text-align: center;
     font-size: 2.5rem;
@@ -1118,7 +1118,7 @@ html, body {
 }
 
 #page4 .main-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.5rem;
     color: #333;
     text-align: center;
@@ -1261,7 +1261,7 @@ html, body {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 #page3 {
@@ -1269,7 +1269,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 #page4 {
-    background-color: #f8f9fa;
+    background-color: #ffffff;
 }
 
 /* Content wrapper styles for full-screen effect on pages 4, 5, and 6 */
@@ -1493,7 +1493,7 @@ canvas {
 }
 
 .panel-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     margin-top: 0;
     margin-bottom: 15px;
@@ -1684,7 +1684,7 @@ canvas {
 }
 
 .panel-title {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     margin-top: 0;
     margin-bottom: 15px;
@@ -1843,7 +1843,7 @@ canvas {
     border: 1px solid #ccc;
     border-radius: 4px;
     background-color: white;
-    font-family: 'Lora', serif;
+    font-family: 'Open Sans', sans-serif;
     z-index: 10;
 }
 
@@ -1859,17 +1859,17 @@ canvas {
 }
 
 .chart-title, .x-axis-label, .y-axis-label {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-weight: 700;
 }
 
 .x-axis text, .y-axis text {
-    font-family: 'Lora', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 12px;
 }
 
 .legend text {
-    font-family: 'Lora', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 12px;
     alignment-baseline: middle;
 }
@@ -1879,11 +1879,11 @@ canvas {
     border-left: 1px solid #eee;
     padding: 0;
     overflow-y: auto;
-    font-family: 'Lora', serif;
+    font-family: 'Open Sans', sans-serif;
 }
 
 .university-info h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     margin-bottom: 20px;
     padding-bottom: 10px;
@@ -1891,7 +1891,7 @@ canvas {
 }
 
 .university-info h3 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     color: #333;
     margin: 20px 0 15px;
 }
@@ -2077,7 +2077,7 @@ canvas {
 }
 
 #page3-5 h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.8rem;
     color: #000102;
     margin-bottom: 30px;
@@ -2154,7 +2154,7 @@ canvas {
 }
 
 #page4-5 h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.4rem;
     color: #000509;
     margin-bottom: 30px;
@@ -2204,7 +2204,7 @@ canvas {
 }
 
 #page5-5 h2 {
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     font-size: 2.4rem;
     color: #000509;
     margin-bottom: 30px;
@@ -2247,7 +2247,7 @@ canvas {
 .custom-dropdown {
     position: relative;
     width: 160px;
-    font-family: 'Playfair Display', serif;
+    font-family: 'Open Sans', sans-serif;
     margin-bottom: 15px;
     margin-left: 10px;
 }
