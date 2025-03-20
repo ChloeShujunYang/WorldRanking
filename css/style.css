@@ -2040,3 +2040,81 @@ canvas {
     color: #a50f15;
     font-weight: 500; /* Increased font weight to match image */
 }
+
+/* Page 3.5 transition styles */
+#page3-5 {
+    position: relative;
+    height: 100vh;
+    background: linear-gradient(rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.75));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.transition-container {
+    max-width: 1000px;
+    padding: 40px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.8s ease forwards;
+    border: 2px solid rgba(0, 0, 0, 0.8);  /* 添加黑色边框 */
+    border-radius: 10px;  /* 圆角 */
+    background: rgba(255, 255, 255, 0.9);  /* 轻微的白色背景 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);  /* 添加轻微阴影 */
+}
+
+#page3-5 h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8rem;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    line-height: 1.3;
+    font-weight: 600;
+}
+
+#page3-5 p {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #34495e;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+#page3-5 p:first-of-type {
+    margin-bottom: 25px;  /* 添加第一段的下边距 */
+}
+
+/* Highlight key phrases */
+#page3-5 p strong {
+    color: #cb181d;
+    font-weight: 500;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    #page3-5 h2 {
+        font-size: 2.5rem;
+    }
+    
+    #page3-5 p {
+        font-size: 1.2rem;
+        padding: 0 20px;
+    }
+    
+    .transition-container {
+        padding: 20px;
+    }
+}
+
+/* Animation keyframes */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
