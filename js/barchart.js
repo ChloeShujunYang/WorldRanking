@@ -43,26 +43,44 @@ class BarChart {
                     data: [],
                     backgroundColor: 'rgba(54, 162, 235, 0.8)',
                     borderColor: 'rgb(54, 162, 235)',
-                    borderWidth: 1
+                    borderWidth: 1,
+                    // Hover color changes
+                    hoverBackgroundColor: 'rgba(255, 99, 132, 1)',
+                    hoverBorderColor: 'rgb(255, 99, 132)'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+    
+                // Change the mouse cursor on hover
                 onHover: (event, activeElements) => {
                     if (activeElements.length > 0) {
-                      // Mouse is over a bar
-                      const index = activeElements[0].index;
-                      const dataAtIndex = this.currentUniversities[index];
-                      console.log('Hovering over:', dataAtIndex);
-                      // You could change the cursor:
-                      event.native.target.style.cursor = 'pointer';
-                      // Or do custom highlight logic
+                        // Mouse is over a bar
+                        const index = activeElements[0].index;
+                        const dataAtIndex = this.currentUniversities[index];
+                        console.log('Hovering over:', dataAtIndex);
+    
+                        // Change cursor to pointer
+                        event.native.target.style.cursor = 'pointer';
                     } else {
-                      // Mouse not over any bar
-                      event.native.target.style.cursor = 'default';
+                        // Mouse not over any bar
+                        event.native.target.style.cursor = 'default';
                     }
-                  },
+                },
+    
+                // Handle clicks on a bar
+                onClick: (event, elements) => {
+                    if (elements.length > 0) {
+                        const index = elements[0].index;
+                        const universityData = this.currentUniversities[index];
+                        console.log('BarChart: Selected university:', universityData);
+                        document.dispatchEvent(new CustomEvent('universitySelected', {
+                            detail: universityData
+                        }));
+                    }
+                },
+    
                 scales: {
                     y: {
                         beginAtZero: true,
@@ -83,6 +101,7 @@ class BarChart {
                         }
                     }
                 },
+    
                 plugins: {
                     title: {
                         display: true,
@@ -92,19 +111,10 @@ class BarChart {
                             size: 19
                         }
                     }
-                },
-                onClick: (event, elements) => {
-                    if (elements.length > 0) {
-                        const index = elements[0].index;
-                        const universityData = this.currentUniversities[index];
-                        console.log('BarChart: Selected university:', universityData);
-                        document.dispatchEvent(new CustomEvent('universitySelected', {
-                            detail: universityData
-                        }));
-                    }
                 }
             }
         });
+    
         
         console.log('BarChart: Chart initialized');
     }
