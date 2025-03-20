@@ -269,18 +269,19 @@ class Scatterplot {
          .style("opacity", 0.5)
          .style("cursor", "pointer")
          .on("mouseover", function(event, d) {
-             if (vis.selectedLine !== this) { // 只有不是选中的线才变色
+             // Only highlight if this line is not the currently selected one
+             if (!vis.isSelectedLine(this, d)) {
                  d3.select(this)
-                     .raise() 
                      .transition()
                      .duration(200)
                      .style("stroke", "#3498db")
                      .style("stroke-width", 7)
-                     .style("opacity", 1);
+                     .style("opacity", 0.5);  // Keep the same opacity as unselected lines
              }
          })
          .on("mouseout", function(event, d) {
-             if (vis.selectedLine !== this) { // 只有不是选中的线才恢复默认色
+             // Only reset if this line is not the currently selected one
+             if (!vis.isSelectedLine(this, d)) {
                  d3.select(this)
                      .transition()
                      .duration(200)
@@ -290,30 +291,16 @@ class Scatterplot {
              }
          })
          .on("click", function(event, d) {
-             // 先让所有线恢复默认颜色
-             vis.linesGroup.selectAll(".variable-line")
-                 .transition()
-                 .duration(200)
-                 .style("stroke", "#cccccc")
-                 .style("stroke-width", 5)
-                 .style("opacity", 0.5);
- 
-             // 让当前点击的线保持蓝色
-             d3.select(this)
-                 .raise()
-                 .transition()
-                 .duration(200)
-                 .style("stroke", "#3498db")
-                 .style("stroke-width", 7)
-                 .style("opacity", 1);
- 
-             // 记录当前选中的线
-             vis.selectedLine = this;
- 
-             // 触发变量选择更新
              vis.selectVariables(d.variables);
          });
          
+        // Helper function to check if a line is currently selected
+        vis.isSelectedLine = function(element, data) {
+            return vis.selectedLine === element || 
+                   (data.variables[0] === vis.selectedVariables[0] && data.variables[1] === vis.selectedVariables[1]) ||
+                   (data.variables[0] === vis.selectedVariables[1] && data.variables[1] === vis.selectedVariables[0]);
+        };
+
         // Define colors
         vis.colors = {
             circleFillDefault: "#add8e6",    // Light blue
@@ -322,7 +309,7 @@ class Scatterplot {
             textHighlight: "#ffffff"         // White
         };
 
-        // Draw circles in the middle layer
+        // Draw circles in the middle layer - remove cursor pointer
         vis.circlesGroup.selectAll(".variable-circle")
             .data(vis.vertices)
             .join("circle")
@@ -332,7 +319,7 @@ class Scatterplot {
             .attr("r", circleRadius)
             .style("fill", vis.colors.circleFillDefault)
             .style("stroke", "none")
-            .style("cursor", "pointer");
+            .style("cursor", "default");  // Change cursor to default instead of pointer
 
         // Create text groups in the top layer
         const textGroups = vis.textGroup.selectAll(".variable-text-group")
@@ -434,10 +421,10 @@ class Scatterplot {
         const vis = this;
         console.log("Scatterplot Debug: Starting initPlot");
         
-        // Define colors
+        // Update the plot colors to include a darker, translucent blue
         vis.plotColors = {
             darkGrey: "#4a4a4a",
-            lightBlue: "#add8e6",
+            lightBlue: "rgba(52, 152, 219, 0.6)",  // Changed to darker blue with 0.6 opacity
             darkBlue: "#3498db"
         };
 
@@ -615,8 +602,10 @@ class Scatterplot {
             .raise()
             .style("stroke", "#3498db")
             .style("stroke-width", 7)
-            .style("opacity", 1)
+            .style("opacity", 1)  // Selected line has full opacity
             .each(function() {
+                // Store the selected line element
+                vis.selectedLine = this;
                 // Move to front within the lines group only
                 this.parentNode.appendChild(this);
             });
@@ -683,21 +672,21 @@ class Scatterplot {
         
         // Exit
         if (vis.isInitialRender) {
-            points.exit().remove();  // 初始渲染时直接移除
+            points.exit().remove();
         } else {
-            points.exit()  // 年份更新时使用过渡
+            points.exit()
                 .transition()
                 .duration(1000)
                 .attr("r", 0)
                 .remove();
         }
         
-        // Enter - add new points
+        // Enter - add new points with updated color
         const pointsEnter = points.enter()
             .append("circle")
             .attr("class", "point")
             .attr("r", vis.circleRadius)
-            .attr("fill", vis.plotColors.lightBlue)
+            .attr("fill", vis.plotColors.lightBlue)  // Using the new translucent color
             .style("cursor", "pointer");
         
         // Update + Enter
