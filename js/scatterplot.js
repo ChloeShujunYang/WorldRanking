@@ -394,7 +394,7 @@ class Scatterplot {
             .attr("r", circleRadius)
             .style("fill", vis.colors.circleFillDefault)
             .style("stroke", "none")
-            .style("cursor", "pointer")
+            .style("cursor", "default")
             .on("mouseover", function(event, d) {
                 const formattedName = formatMetricName(d.name);
                 
@@ -687,7 +687,7 @@ class Scatterplot {
             .attr("class", "point")
             .attr("r", vis.circleRadius)
             .attr("fill", vis.plotColors.lightBlue)  // Using the new translucent color
-            .style("cursor", "pointer");
+            .style("cursor", "default");
         
         // Update + Enter
         if (vis.isInitialRender) {
@@ -867,7 +867,8 @@ class Scatterplot {
             .attr("r", 8)
             .style("fill", "#3498db")
             .style("stroke", "white")
-            .style("stroke-width", 2);
+            .style("stroke-width", 2)
+            .style("cursor", "default");
 
         // Add labels
         const labels = hexagonGroup.selectAll("text")
@@ -879,6 +880,7 @@ class Scatterplot {
             .style("text-anchor", "middle")
             .style("dominant-baseline", "middle")
             .style("font-size", "12px")
+            .style("cursor", "default")
             .text(d => d.label);
 
         // Handle line click

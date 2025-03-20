@@ -96,16 +96,20 @@ class BarChart {
                         title: {
                             display: true,
                             text: 'Overall Score'
+                        },
+                        ticks: {
+                            font: {
+                                size: 10  // Decreased from default (12px)
+                            }
                         }
                     },
                     x: {
-                        title: {
-                            display: true,
-                            text: 'University Name'
-                        },
                         ticks: {
-                            maxRotation: 45,
-                            minRotation: 45
+                            maxRotation: 25,
+                            minRotation: 25,
+                            font: {
+                                size: 10  // Decreased from default (12px)
+                            }
                         }
                     }
                 },
