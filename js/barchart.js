@@ -41,14 +41,25 @@ class BarChart {
                 datasets: [{
                     label: 'Overall Score',
                     data: [],
-                    backgroundColor: 'rgba(54, 162, 235, 0.8)',
-                    borderColor: 'rgb(54, 162, 235)',
-                    borderWidth: 1
+                    backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    borderColor: 'rgba(54, 162, 235, 0.6)',
+                    borderWidth: 1,
+                    hoverBackgroundColor: 'rgb(54, 162, 235)',
+                    hoverBorderColor: 'rgb(54, 162, 235)',
+                    hoverBorderWidth: 2
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                animation: {
+                    duration: 150
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true,
+                    animationDuration: 150
+                },
                 
                 // Changes the mouse cursor on hover
                 onHover: (event, activeElements) => {
