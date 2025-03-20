@@ -105,7 +105,7 @@ class Scatterplot {
         // Calculate heights for hexagon container (70% of its previous height)
         const totalHeight = containerElement.clientHeight;
         const hexagonHeight = Math.floor(totalHeight * 0.6); // 60% of 100%
-        const sliderHeight = 100; // Fixed height for slider
+        const sliderHeight = 40; // Fixed height for slider
 
         // Add single title for both metrics and year selection
         leftPanel.append("h2")
@@ -543,9 +543,9 @@ class Scatterplot {
         // Add year labels
         const labelContainer = vis.sliderContainer.append("div")
             .style("display", "flex")
-            .style("justify-content", "space-between")  // Changed from space-between to space-around
-            .style("width", "100%")                     // Slightly reduced width to prevent labels from touching edges
-            .style("margin", "0 auto")                 // Center the container
+            .style("justify-content", "space-between")
+            .style("width", "100%")
+            .style("margin", "0 auto")
             .style("padding", "0 0px");
 
         // Add year markers
