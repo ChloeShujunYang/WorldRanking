@@ -49,6 +49,20 @@ class BarChart {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                onHover: (event, activeElements) => {
+                    if (activeElements.length > 0) {
+                      // Mouse is over a bar
+                      const index = activeElements[0].index;
+                      const dataAtIndex = this.currentUniversities[index];
+                      console.log('Hovering over:', dataAtIndex);
+                      // You could change the cursor:
+                      event.native.target.style.cursor = 'pointer';
+                      // Or do custom highlight logic
+                    } else {
+                      // Mouse not over any bar
+                      event.native.target.style.cursor = 'default';
+                    }
+                  },
                 scales: {
                     y: {
                         beginAtZero: true,
