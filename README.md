@@ -1,1 +1,1 @@
-if encounter any web structure issues, plz refresh it to solve the problem
+The deployed verison is here https://chloeshujunyang.github.io/WorldRanking/
