@@ -5,6 +5,7 @@ class BarChart {
         this.chart = null;
         this.selectedCountry = 'United States';
         this.selectedRange = '1-5';
+        this.selectedBarIndex = 0; // Track the selected bar index
         
         console.log(`BarChart: Container ID = ${containerId}`);
         console.log(`BarChart: Initial data sample =`, data.slice(0, 5));
@@ -52,6 +53,15 @@ class BarChart {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        left: 50,    // Increased left padding for y-axis
+                        right: 20,
+                        top: 10,     // Reduced top padding
+                        bottom: 10
+                    }
+                },
+                height: 350,
                 animation: {
                     duration: 150
                 },
@@ -82,7 +92,12 @@ class BarChart {
                     if (elements.length > 0) {
                         const index = elements[0].index;
                         const universityData = this.currentUniversities[index];
-                        console.log('BarChart: Selected university:', universityData);
+                        
+                        // Update selected bar
+                        this.selectedBarIndex = index;
+                        this.updateBarHighlight();
+                        
+                        // Dispatch university selection event
                         document.dispatchEvent(new CustomEvent('universitySelected', {
                             detail: universityData
                         }));
@@ -95,25 +110,30 @@ class BarChart {
                         max: 100,
                         title: {
                             display: true,
-                            text: 'Overall Score'
+                            text: 'Overall Score',
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            padding: {
+                                bottom: 10
+                            }
                         },
                         ticks: {
                             font: {
-                                size: 10  // Decreased from default (12px)
-                            }
+                                size: 12
+                            },
+                            padding: 8
                         }
                     },
                     x: {
-                        ticks: {
-                            maxRotation: 25,
-                            minRotation: 25,
-                            font: {
-                                size: 10  // Decreased from default (12px)
-                            }
-                        }
+                        display: false
                     }
                 },
                 plugins: {
+                    legend: {
+                        display: false  // Remove the legend
+                    },
                     title: {
                         display: true,
                         text: 'Top Universities by Overall Score',
@@ -125,23 +145,28 @@ class BarChart {
                         color: '#000509',
                         padding: {
                             top: 10,
-                            bottom: 10
-                        }
-                    },
-                    // Disable dataset toggling on legend click
-                    legend: {
-                        display: true,
-                        onClick: (evt, legendItem, legend) => {
-                            // Do nothing here so the dataset stays visible
+                            bottom: 20
                         }
                     }
                 }
             }
         });
         
-        console.log('BarChart: Chart initialized');}
-        
+        console.log('BarChart: Chart initialized');
 
+        // Highlight the default bar
+        this.updateBarHighlight();
+    }
+
+    updateBarHighlight() {
+        const datasets = this.chart.data.datasets;
+        datasets[0].backgroundColor = datasets[0].data.map((_, index) => 
+            index === this.selectedBarIndex 
+                ? 'rgb(54, 162, 235)'  // Highlighted bar
+                : 'rgba(54, 162, 235, 0.6)'  // Normal bars
+        );
+        this.chart.update();
+    }
 
     updateRangeFilter(totalUniversities) {
         console.log(`BarChart: Updating range filter for ${totalUniversities} universities`);
@@ -226,9 +251,6 @@ class BarChart {
         console.log(`BarChart: Updated labels:`, this.chart.data.labels);
         console.log(`BarChart: Updated data:`, this.chart.data.datasets[0].data);
         
-        // Update chart title
-        
-        
         this.chart.update();
 
         // Update the dropdown selection to reflect the current range
@@ -236,6 +258,10 @@ class BarChart {
         if (filterSelect) {
             filterSelect.value = this.selectedRange; // Set the dropdown to the current range
         }
+
+        // Reset selection to first bar
+        this.selectedBarIndex = 0;
+        this.updateBarHighlight();
 
         // Trigger selection of first university for radar chart
         if (this.currentUniversities.length > 0) {

@@ -665,10 +665,18 @@ html, body {
 }
 
 #bar-chart-container {
-    width: 150%;  /* Keeping the increased width */
-    height: 400px;  /* Increased from 350px to 400px */
-    margin-top: 20px;
+    flex: 1;
     position: relative;
+    height: 300px !important;
+    width: 150% !important;  /* Make it 50% wider */
+    margin: 0;
+    padding: 0;
+    overflow: visible;  /* Allow the chart to extend beyond container */
+}
+
+#bar-chart-canvas {
+    width: 100% !important;
+    height: 100% !important;
 }
 
 #page4 .content-wrapper {
@@ -714,20 +722,26 @@ html, body {
     display: flex;
     flex-direction: column;
     gap: 0px;
-    width: 40%;
+    width: 350px;
     overflow: visible;
     margin-top: 20px;
     margin-right: 300px;
-    height: 700px;  /* Increased from 650px to 700px to accommodate taller bar chart */
-    width: 350px;
+    height: 700px;
 }
 
-#radar-chart-container, #bar-chart-container {
+#radar-chart-container {
+    flex: 0 0 250px;  /* Fixed height for radar chart */
+    position: relative;
+    margin: 0;
+    padding: 0;
+}
+
+#bar-chart-container {
     flex: 1;
     position: relative;
-    min-height: 230px;
-    margin: 0;  /* Removed any margin */
-    padding: 0;  /* Added to ensure no padding */
+    height: 300px !important;  /* Reduced height */
+    margin: 0;
+    padding: 0;
 }
 
 /* Canvas styles */
