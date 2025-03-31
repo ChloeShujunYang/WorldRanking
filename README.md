@@ -18,7 +18,7 @@ The University Rankings Analysis website is an interactive platform designed to 
 ### 4. World Map with Radar and Bar Chart
 - **Global University Rankings**: Visualizes the distribution and performance of universities worldwide.
 - **Year Selection**: Select the year you are interested in from the title, there will be a drop-down menu for you to select.
-- **World Map**: Interactive globe showing university locations and scores, click on any country or region you are interested in to see detail. (If white, it means there's no top 200 university in this country or region in this year.)
+- **World Map**: Interactive globe showing university locations and scores, drag the globe to rotate it and click on any country or region you are interested in to see detail. (If white, it means there's no top 200 university in this country or region in this year.)
 - **Bar Chart**: Ranks universities by overall score, with interactive selection of ranking range, selecting on a university by clicking on the bar will trigger interaction to the radar chart above it.
 - **Radar Chart**: Displays various performance metrics for selected university (from bar chart).
 
