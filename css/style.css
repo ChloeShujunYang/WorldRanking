@@ -242,10 +242,14 @@ html, body {
     transition: background-color 0.3s;
 }
 
-.page-nav li:first-child.active ~ li,
 .page-nav li:first-child.active {
-    background-color: rgba(255, 255, 255, 0.7);
+    background-color: #ffffff !important;
 }
+
+.page-nav li:first-child.active ~ li {
+    background-color: rgba(255, 255, 255, 0.7) !important;
+}
+
 
 .page-nav li.active {
     background-color: rgba(0, 0, 0, 0.7);
