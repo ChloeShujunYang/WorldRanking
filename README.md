@@ -18,8 +18,8 @@ The University Rankings Analysis website is an interactive platform designed to 
 ### 4. World Map with Radar and Bar Chart
 - **Global University Rankings**: Visualizes the distribution and performance of universities worldwide.
 - **Year Selection**: Select the year you are interested in from the title, there will be a drop-down menu for you to select.
-- **World Map**: Interactive globe showing university locations and scores, drag the globe to rotate it and click on any country or region you are interested in to see detail. (If white, it means there's no top 200 university in this country or region in this year.)
-- **Bar Chart**: Ranks universities by overall score, with interactive selection of ranking range, selecting on a university by clicking on the bar will trigger interaction to the radar chart above it.
+- **World Map**: Interactive globe showing university locations and scores, drag the globe to rotate it and click on any country or region you are interested in to see detail. (If white, it means there's no top 200 university in this country or region in this year.)Hover to see country names and relevent information.
+- **Bar Chart**: Ranks universities by overall score, with interactive selection of ranking range, selecting on a university by clicking on the bar will trigger interaction to the radar chart above it. Hover to see school names and total scores.
 - **Radar Chart**: Displays various performance metrics for selected university (from bar chart).
 
 ### 5. Trends in University Rankings
@@ -32,7 +32,9 @@ The University Rankings Analysis website is an interactive platform designed to 
 
 ### 7. Scatterplot
 - **Metric Comparison**: Compares different performance metrics for universities in different years. Select the year by sliding the slider bar below the hexagon.
-- **Interactive Selection**: Users can click on the lines between the vertices of the hexagon to explore relationships between the metrics, which will be shown as a scatter plot on the right.
+- **Interactive hexagram**: Users can click on the lines between the vertices of the hexagon to explore relationships between the metrics, which will be shown as a scatter plot on the right.
+- **Interactive Scatterplot**: Shows the relationship between two selected metrics for each university. Users can hover over any point on the scatterplot to view the university name and its corresponding score.
+
 
 ### 8. Conclusion
 - **Critical View**: Discusses the implications of university rankings from an applicant's perspective.
@@ -51,7 +53,7 @@ The goal of the University Rankings Analysis website is to provide a comprehensi
 
 ## Getting Started
 
-To run the website locally, ensure you have a web server set up to serve the HTML and JavaScript files. Open `index.html` in your browser to start exploring the visualizations.
+To run the website locally, ensure you have a web server set up to serve the HTML and JavaScript files. Open `index.html` by open with live server to start exploring the visualizations.
 
 ## Troubleshooting
 
