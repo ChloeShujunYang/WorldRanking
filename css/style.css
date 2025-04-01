@@ -1595,8 +1595,9 @@ canvas {
 }
 
 #bar-chart-container {
+    padding-right: 30px;
     max-height: 400px;
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
 #worldmap-chart {
