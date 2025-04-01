@@ -1599,7 +1599,7 @@ canvas {
     width: 100%; /* Ensure the canvas takes the full width of the container */
     height: 100%; /* Maintain aspect ratio */
     transform: translateX(-80px); /* Shift the chart to the left */
-    padding-bottom: 30px;
+    padding-bottom: 80px;
 }
 
 /* World Map and Charts Grid Layout */
