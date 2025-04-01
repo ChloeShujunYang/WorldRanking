@@ -52,7 +52,7 @@ class BarChart {
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: false,
+                maintainAspectRatio: true,
                 layout: {
                     padding: {
                         left: 50,    // Increased left padding for y-axis
