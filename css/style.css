@@ -676,12 +676,12 @@ html, body {
     margin: 0;
     padding: 0;
     overflow: visible;  /* Allow the chart to extend beyond container */
+    /* transform: translateX(-100px); Shift the chart to the left */
+
+    
 }
 
-#bar-chart-canvas {
-    width: 100% !important;
-    height: 100% !important;
-}
+
 
 #page4 .content-wrapper {
     position: relative;
@@ -746,6 +746,7 @@ html, body {
     height: 300px !important;  /* Reduced height */
     margin: 0;
     padding: 0;
+    padding-bottom: 30px;
 }
 
 /* Canvas styles */
@@ -1597,6 +1598,8 @@ canvas {
 #bar-chart-canvas {
     width: 100%; /* Ensure the canvas takes the full width of the container */
     height: 100%; /* Maintain aspect ratio */
+    transform: translateX(-80px); /* Shift the chart to the left */
+    padding-bottom: 30px;
 }
 
 /* World Map and Charts Grid Layout */
@@ -1614,7 +1617,7 @@ canvas {
 
 #bar-chart-container {
     max-height: 400px;
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
 #worldmap-chart {

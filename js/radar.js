@@ -57,10 +57,18 @@ class RadarChart {
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: 0,    // Negative padding to push content up
+                        bottom: 0,
+
+                    }
+                },
                 plugins: {
                     title: {
                         display: true,
                         text: 'University Performance Metrics',
+                        fullSize: false,
                         font: {
                             family: 'Open Sans, sans-serif',
                             size: 24,
@@ -68,8 +76,8 @@ class RadarChart {
                         },
                         color: '#000509',
                         padding: {
-                            top: 10,
-                            bottom: 10
+                            top: 0,
+                            bottom: 0
                         }
                     },
                     legend: {
@@ -97,6 +105,7 @@ class RadarChart {
                             }
                         },
                         pointLabels: {
+                            padding: 15,
                             font: {
                                 size: 12
                             }
