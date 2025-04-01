@@ -1464,17 +1464,6 @@ canvas {
     font-size: 14px;
 }
 
-#worldmap-legend {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    z-index: 100;
-}
-
 /* Ensure the legend is behind the globe */
 .legend {
     z-index: 1;
@@ -1657,18 +1646,6 @@ canvas {
     margin: 5px 0;
     font-size: 14px;
 }
-
-#worldmap-legend {
-    position: absolute;
-    bottom: 20px;
-    right: 20px;
-    background: rgba(255, 255, 255, 0.8);
-    padding: 10px;
-    border-radius: 4px;
-    border: 1px solid #ddd;
-    z-index: 100;
-}
-
 /* Globe Interaction Styles */
 .globe-group {
     cursor: grab;
