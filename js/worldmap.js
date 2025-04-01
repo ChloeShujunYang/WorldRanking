@@ -349,6 +349,9 @@ class WorldMap {
                 
                 // Make the globe draggable/rotatable
                 vis.makeGlobeDraggable();
+
+                // Start the globe rotation
+                vis.startGlobeRotation();
             })
             .catch(function(error) {
                 console.error("Error loading world data:", error);
@@ -426,6 +429,20 @@ class WorldMap {
                     vis.globeGroup.selectAll("path").attr("d", vis.path);
                 })
         );
+    }
+
+    // Method to start the globe rotation
+    startGlobeRotation() {
+        const vis = this;
+        let rotationSpeed = 0.1; // Adjust this value to change the speed of rotation
+
+        d3.timer(() => {
+            let currentRotation = vis.projection.rotate();
+            vis.projection.rotate([currentRotation[0] + rotationSpeed, currentRotation[1]]);
+            
+            // Update all paths with the new projection
+            vis.globeGroup.selectAll("path").attr("d", vis.path);
+        });
     }
 
     // Method to update the left panel with location information
